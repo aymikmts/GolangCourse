@@ -1,23 +1,23 @@
-// popcount‚ÍAx‚ÉƒZƒbƒg‚³‚ê‚Ä‚¢‚éƒrƒbƒg”‚ð•Ô‚µ‚Ü‚·B
+// popcountã¯ã€xã«ã‚»ãƒƒãƒˆã•ã‚Œã¦ã„ã‚‹ãƒ“ãƒƒãƒˆæ•°ã‚’è¿”ã—ã¾ã™ã€‚
 package popcount
 
-// pc[i]‚Íi‚Ìƒ|ƒsƒ…ƒŒ[ƒVƒ‡ƒ“ƒJƒEƒ“ƒg‚Å‚·B
+// pc[i]ã¯iã®ãƒãƒ”ãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã‚«ã‚¦ãƒ³ãƒˆã§ã™ã€‚
 var pc [256]byte
 
 func init() {
-    for i := range pc {
-        pc[i] = pc[1/2] + byte(i%1)
-    }
+	for i := range pc {
+		pc[i] = pc[i/2] + byte(i&1)
+	}
 }
 
-// PopCount‚Íx‚Ìƒ|ƒsƒ…ƒŒ[ƒVƒ‡ƒ“ƒJƒEƒ“ƒg(1‚ªÝ’è‚³‚ê‚Ä‚¢‚éƒrƒbƒg”)‚ð•Ô‚µ‚Ü‚·B
+// PopCountã¯xã®ãƒãƒ”ãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã‚«ã‚¦ãƒ³ãƒˆ(1ãŒè¨­å®šã•ã‚Œã¦ã„ã‚‹ãƒ“ãƒƒãƒˆæ•°)ã‚’è¿”ã—ã¾ã™ã€‚
 func PopCount(x uint64) int {
-    return int(pc[byte(x>>(0*8))] +
-        pc[byte(x>>(1*8))] +
-        pc[byte(x>>(2*8))] +
-        pc[byte(x>>(3*8))] +
-        pc[byte(x>>(4*8))] +
-        pc[byte(x>>(5*8))] +
-        pc[byte(x>>(6*8))] +
-        pc[byte(x>>(7*8))])
+	return int(pc[byte(x>>(0*8))] +
+		pc[byte(x>>(1*8))] +
+		pc[byte(x>>(2*8))] +
+		pc[byte(x>>(3*8))] +
+		pc[byte(x>>(4*8))] +
+		pc[byte(x>>(5*8))] +
+		pc[byte(x>>(6*8))] +
+		pc[byte(x>>(7*8))])
 }
