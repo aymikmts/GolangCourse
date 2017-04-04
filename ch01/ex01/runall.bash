@@ -1,4 +1,3 @@
 #!/bin/bash
 
-./main test1 test2 test3
-./main test1 test2 test3 test4
+go run main.go test1 test2 test3
