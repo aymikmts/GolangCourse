@@ -1,6 +1,4 @@
-// text page:	p.9
-// date:		2017/03/19
-
+// mainは、個々の引数のインデックスと値の組を1行ごとに出力します。
 package main
 
 import (
