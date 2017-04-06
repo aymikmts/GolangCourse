@@ -3,22 +3,28 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"time"
+	"strconv"
 
 	"./echo2"
 	"./echo3"
 )
 
 func main() {
-	start := time.Now()
-	echo2.Echo(os.Args[1:])
-	ms := time.Since(start).Nanoseconds()
-	fmt.Printf("echo2 time: %vs\n\n", ms)
+	var args []string
+	for i:=0; i<10; i++ {
+		s := strconv.Itoa(i)
+		args = append(args, s)
+	}
 
-	start = time.Now()
-	echo3.Echo(os.Args[1:])
-	ms = time.Since(start).Nanoseconds()
-	fmt.Printf("echo3 time: %vs\n", ms)
+	start1 := time.Now()
+	echo2.Echo(args)
+	ms1 := time.Since(start1).Nanoseconds()
+	fmt.Printf("echo2 time: %v nanoseconds\n\n", ms1)
+
+	start2 := time.Now()
+	echo3.Echo(args)
+	ms2 := time.Since(start2).Nanoseconds()
+	fmt.Printf("echo3 time: %v nanoseconds\n", ms2)
 
 }
