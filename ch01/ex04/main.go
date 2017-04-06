@@ -1,6 +1,4 @@
-// text page	p.14
-// date			2017/03/19
-
+// mainは入力に2回以上現れた行の数とテキスト、その行が含まれていた全てのファイル名を表示します。
 package main
 
 import (
@@ -26,14 +24,14 @@ func main() {
 			f.Close()
 
 			for line, n := range counts {
-				if n > 1 {
+				if n > 0 {
 					fnames[line] += arg + ","
 				}
 			}
 		}
 	}
 	for line, n := range counts {
-		if n > 1 {
+		if n > 0 {
 			fmt.Printf("%d\t%s\t%s\n", n, line, fnames[line])
 		}
 	}
