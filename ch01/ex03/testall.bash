@@ -1,6 +1,7 @@
 #!/bin/bash
+cd `dirname $0`
 
-cd echo2    
+cd echo2
 go test -bench=.
 
 cd ../echo3
