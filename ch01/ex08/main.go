@@ -1,6 +1,7 @@
 // texte page	p.19
 // date			2017/03/20
 
+// mainは引数に接頭辞http://がなければ追加し、URLある内容を表示します
 package main
 
 import (
