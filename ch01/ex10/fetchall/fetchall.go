@@ -6,11 +6,13 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
-func Fetch(url string, ch chan<- string) {
+func Fetch(inurl string, ch chan<- string) {
 	start := time.Now()
+	url := addprefix(inurl)
 	resp, err := http.Get(url)
 	if err != nil {
 		ch <- fmt.Sprint(err) // chチャネルへ送信
@@ -25,4 +27,14 @@ func Fetch(url string, ch chan<- string) {
 	}
 	secs := time.Since(start).Seconds()
 	ch <- fmt.Sprintf("%.2fs  %7d  %s", secs, nbytes, url)
+}
+
+func addprefix(url string) string {
+	var ret string
+	if strings.HasPrefix(url, "http://") {
+		ret = url
+	} else {
+		ret = "http://" + url
+	}
+	return ret
 }
