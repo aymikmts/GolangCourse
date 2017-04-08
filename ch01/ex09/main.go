@@ -1,6 +1,7 @@
 // text page	p.16
 // date			2017/03/20
 
+// mainはURLにある内容とHTTPステータスコードを表示します。
 package main
 
 import (
