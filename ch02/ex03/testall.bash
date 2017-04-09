@@ -1,7 +1,11 @@
 #!/bin/bash
+cd `dirname $0`
 
-cd popcountroop
+echo --- TEST PopCount \(with Table\) ---
+cd popcount
 go test -bench=.
 
-cd ../popcount
+echo --- TEST PopRoop ---
+cd ../popcountroop
 go test -bench=.
+
