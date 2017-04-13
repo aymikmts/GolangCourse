@@ -3,11 +3,22 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"os"
 )
 
+var out io.Writer = os.Stdout
+
 func main() {
-	for i := 1; i < len(os.Args); i++ {
-		fmt.Println(i, os.Args[i])
+	if err := echo(os.Args); err != nil {
+		fmt.Fprintf(os.Stderr, "echo: %v\n", err)
+		os.Exit(1)
 	}
+}
+
+func echo(args []string) error {
+	for i := 1; i < len(args); i++ {
+		fmt.Fprintln(out, i, args[i])
+	}
+	return nil
 }
