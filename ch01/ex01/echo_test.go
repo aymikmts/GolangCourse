@@ -12,7 +12,7 @@ func TestEcho(t *testing.T) {
 		args []string
 		want string
 	}{
-		{[]string{"test1 test2 test3"}, "test1 test2 test3\n"},
+		{[]string{"path/main.exe", "test1", "test2", "test3"}, "main.exe test1 test2 test3\n"},
 		{[]string{""}, "\n"},
 	}
 
