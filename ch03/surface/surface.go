@@ -18,7 +18,6 @@ const (
 )
 
 var sin30, cos30 = math.Sin(angle), math.Cos(angle) // sin(30度), cos(30度)
-//var out io.Writer = os.Stdout
 
 func PrintXML(out io.Writer) {
 	fmt.Fprintf(out, "<svg xmlns='http://www.w3.org/2000/svg' "+
@@ -26,6 +25,7 @@ func PrintXML(out io.Writer) {
 		"width='%d' height='%d'>", width, height)
 	for i := 0; i < cells; i++ {
 		for j := 0; j < cells; j++ {
+			// 戻り値okがfalseだったときは、スキップする。
 			ax, ay, ok := corner(i+1, j)
 			if !ok {
 				continue
@@ -57,6 +57,7 @@ func corner(i, j int) (sx float64, sy float64, ok bool) {
 	// 面の高さzを計算する。
 	z := f(x, y)
 	if math.IsNaN(z) {
+		// 値がNaNだった場合はStderr出力し、falseを返す。
 		fmt.Fprintf(os.Stderr, "[%d, %d]z := f(%.5f, %.5f) : Value is NaN!\n", i, j, x, y)
 		ok = false
 		return
