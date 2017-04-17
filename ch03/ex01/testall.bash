@@ -2,4 +2,4 @@
 cd `dirname $0`
 
 cd ../surface
-go test -run=TestCorner
+go test -v -run="TestPrintXML|TestCorner"

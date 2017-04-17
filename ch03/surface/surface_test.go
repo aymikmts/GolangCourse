@@ -2,8 +2,6 @@ package surface
 
 import (
 	"bytes"
-	"fmt"
-	"os"
 	"testing"
 )
 
@@ -11,12 +9,13 @@ func TestPrintXML(t *testing.T) {
 	out := new(bytes.Buffer)
 	PrintXML(out)
 
-	n, err := out.WriteTo(os.Stdout)
-
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "err:%d\n", err)
+	// バッファから文字列"NaN"を探索し、ヒットしたら失敗。
+	sep := []byte("NaN")
+	buf := out.Bytes()
+	index := bytes.Index(buf, sep)
+	if index != -1 {
+		t.Errorf(`"NaN" has hit. index=%v`, index)
 	}
-	fmt.Printf("\nn=%d\n", n)
 }
 
 func TestCorner(t *testing.T) {
