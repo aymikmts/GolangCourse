@@ -8,6 +8,18 @@ import (
 	"os"
 )
 
+// 描画するものの種類を定義
+type ModelType int
+
+const (
+	DEFAULT ModelType = iota
+	EGGCASE
+	MOGULS
+	SADDLE
+)
+
+var Model ModelType = DEFAULT // デフォルトモデル
+
 const (
 	width, height = 600, 320            // キャンバスの大きさ(画素数)
 	cells         = 100                 // 格子のます目の数
@@ -68,14 +80,4 @@ func corner(i, j int) (sx float64, sy float64, ok bool) {
 	sy = height/2 + (x+y)*sin30*xyscale - z*zscale
 	ok = true
 	return
-}
-
-func f(x, y float64) float64 {
-	r := math.Hypot(x, y) // (0,0)からの距離
-	return math.Sin(r) / r
-}
-
-func fEggCase(x, y float64) float64 {
-	r := math.Hypot(x, y)
-	return math.Sin(r)
 }
