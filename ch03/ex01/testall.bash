@@ -1,4 +1,5 @@
 #!/bin/bash
 cd `dirname $0`
 
-go test
+cd ../surface
+go test -v -run="TestPrintXML|TestCorner"
