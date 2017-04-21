@@ -1,36 +1,17 @@
 package surface
 
-import (
-	"fmt"
-	"io"
-)
+func calcColor(z float64) string {
+	//	fmt.Fprintf(os.Stderr, "z:%v\n", z)
+	ret := "white"
 
-func PrintXMLColorPolygon(out io.Writer) {
-	fmt.Fprintf(out, "<svg xmlns='http://www.w3.org/2000/svg' "+
-		"style='stroke: grey; fill: white; stroke-width: 0.7' "+
-		"width='%d' height='%d'>", width, height)
-	for i := 0; i < cells; i++ {
-		for j := 0; j < cells; j++ {
-			// 戻り値okがfalseだったときは、スキップする。
-			ax, ay, ok := corner(i+1, j)
-			if !ok {
-				continue
-			}
-			bx, by, ok := corner(i, j)
-			if !ok {
-				continue
-			}
-			cx, cy, ok := corner(i, j+1)
-			if !ok {
-				continue
-			}
-			dx, dy, ok := corner(i+1, j+1)
-			if !ok {
-				continue
-			}
-			fmt.Fprintf(out, "<polygon points='%g,%g %g,%g %g,%g %g,%g'/>\n",
-				ax, ay, bx, by, cx, cy, dx, dy)
-		}
-	}
-	fmt.Fprintln(out, "</svg>")
+	// 頂点が赤(#ff0000)となり谷が青(#0000ff)になるようにする。
+	//	if z > 5 {
+	//		ret = "#ff0000"
+	//	}
+	//	if z <= 0 {
+	//		ret = "#0000ff"
+	//	}
+	//	color := z*(0x0000ff-0xff0000)/(math.Sqrt(2)*(xyrange*0.5)) + 0xff0000
+	//	ret := fmt.Sprintf("#%x", int(color))
+	return ret
 }
