@@ -1,17 +1,27 @@
 package surface
 
-func calcColor(z float64) string {
-	//	fmt.Fprintf(os.Stderr, "z:%v\n", z)
-	ret := "white"
+import (
+	"fmt"
+)
 
-	// 頂点が赤(#ff0000)となり谷が青(#0000ff)になるようにする。
-	//	if z > 5 {
-	//		ret = "#ff0000"
-	//	}
-	//	if z <= 0 {
-	//		ret = "#0000ff"
-	//	}
-	//	color := z*(0x0000ff-0xff0000)/(math.Sqrt(2)*(xyrange*0.5)) + 0xff0000
-	//	ret := fmt.Sprintf("#%x", int(color))
+// 各モデルの高さの最小値と最大値を定義
+const (
+	defaultMin = -0.2173
+	defaultMax = 0.9851
+	eggCaseMin = 0
+	eggCaseMax = 0.4705
+	mogulsMin  = 0
+	mogulsMax  = 0.5000
+	saddleMin  = 0
+	saddleMax  = 0.7386
+)
+
+var zMin, zMax float64 = 100, -100
+
+func calcColor(z float64) string {
+	// RGBのR, Bに対し、値を算出
+	r := z*(-0xff)/(zMin-zMax) + (0xff*zMin)/(zMin-zMax)
+	b := z*(0xff)/(zMin-zMax) - (0xff*zMax)/(zMin-zMax)
+	ret := fmt.Sprintf("#%02x00%02x", int(r), int(b))
 	return ret
 }

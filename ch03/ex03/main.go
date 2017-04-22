@@ -1,5 +1,6 @@
 // Ex03は3-D面の関数のSVGレンダリングを計算します。
 // コマンド引数フラグによって、描画するモデルに色をつけられます。
+// 着色の色設定の実装については"ch03/surface/surfaceEx03.go"
 package main
 
 import (

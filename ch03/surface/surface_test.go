@@ -33,3 +33,22 @@ func TestCorner(t *testing.T) {
 		}
 	}
 }
+
+func TestCalcColor(t *testing.T) {
+	var tests = []struct {
+		input float64
+		want  string
+	}{
+		{0, "#0000ff"},
+		{127, "#7f0080"},
+		{128, "#80007f"},
+		{255, "#ff0000"},
+	}
+	for _, test := range tests {
+		zMin = 0
+		zMax = 255
+		if got := calcColor(test.input); got != test.want {
+			t.Errorf(`calcColor(%v) = %v`, test.input, got)
+		}
+	}
+}
