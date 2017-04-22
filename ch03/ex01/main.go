@@ -1,5 +1,6 @@
 // Ex01は3-D面の関数のSVGレンダリングを計算します。
-// fの値がNaNだった場合はStderr出力し、xmlファイル出力をスキップします。
+// fの値がNaNだった場合はStderr出力し, そのセルについてはxmlファイル出力をスキップします。
+// 実装は"ch03/surface/surface.go"
 package main
 
 import (
@@ -11,6 +12,5 @@ import (
 var output io.Writer = os.Stdout // mainで使用
 
 func main() {
-	// 実装は"ch03/surface/surface.go"
 	surface.PrintXML(output)
 }

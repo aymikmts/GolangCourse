@@ -4,23 +4,29 @@ import (
 	"math"
 )
 
-// ModelTypeによって描画するモデルをswitch
+// [ex02]引数で与えられた値によって描画するモデルをswitch
+// [ex03]各Model高さの最小値、最大値をxMin, xMaxにセットする
 func f(x, y float64) (r float64) {
 	switch Model {
-	case DEFAULT:
-		r = fDefault(x, y)
-
 	case EGGCASE:
 		r = fEggCase(x, y)
+		zMin = eggCaseMin
+		zMax = eggCaseMax
 
 	case MOGULS:
 		r = fMoguls(x, y)
+		zMin = mogulsMin
+		zMax = mogulsMax
 
 	case SADDLE:
 		r = fSaddle(x, y)
+		zMin = saddleMin
+		zMax = saddleMax
 
 	default:
 		r = fDefault(x, y)
+		zMin = defaultMin
+		zMax = defaultMax
 	}
 	return
 }

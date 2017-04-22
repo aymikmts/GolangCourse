@@ -1,5 +1,6 @@
 // Ex02は3-D面の関数のSVGレンダリングを計算します。
 // コマンド引数フラグによって、描画するモデルに色をつけられます。
+// 各モデルの実装は"ch03/surface/surfaceEx02.go"
 package main
 
 import (
@@ -17,7 +18,6 @@ var modelFlag = flag.String("model", "Default",
 
 func main() {
 	// flagで描画モデルを切り替える。
-	// 各モデルの実装は"ch03/surface/surfaceEx02.go"
 	flag.Parse()
 	switch *modelFlag {
 	case "Default":

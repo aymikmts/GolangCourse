@@ -60,7 +60,8 @@ func PrintXML(out io.Writer) {
 				continue
 			}
 
-			// [ex03]fillパラメータを追加
+			// [ex03]fillパラメータを追加。
+			// corner()内のcalcColor()で算出したカラーコードを記述する
 			fmt.Fprintf(out, "<polygon points='%g,%g %g,%g %g,%g %g,%g' fill=\"%s\"/>\n",
 				ax, ay, bx, by, cx, cy, dx, dy, FillColor)
 		}
@@ -76,13 +77,13 @@ func corner(i, j int) (sx float64, sy float64, ok bool) {
 	// 面の高さzを計算する。
 	z := f(x, y)
 	if math.IsNaN(z) {
-		// 値がNaNだった場合はStderr出力し、falseを返す。
+		// [ex01]値がNaNだった場合はStderr出力し、falseを返す。
 		fmt.Fprintf(os.Stderr, "[%d, %d]z := f(%.5f, %.5f) : Value is NaN!\n", i, j, x, y)
 		ok = false
 		return
 	}
 
-	// [ex03]zに応じて着色させる
+	// [ex03]zに応じて色を算出する
 	if IsColoring {
 		FillColor = calcColor(z)
 	}
