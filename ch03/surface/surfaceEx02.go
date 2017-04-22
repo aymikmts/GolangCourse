@@ -39,8 +39,8 @@ func fDefault(x, y float64) float64 {
 
 // たまごのケース
 func fEggCase(x, y float64) float64 {
-	sx := math.Sin(x * 2 * math.Pi / xyrange * 2)
-	sy := math.Sin(y * 2 * math.Pi / xyrange * 2)
+	sx := math.Sin(x * 2 * math.Pi / XYRange * 2)
+	sy := math.Sin(y * 2 * math.Pi / XYRange * 2)
 	r := math.Hypot(sx, sy)
 	return r / 3
 }
@@ -48,7 +48,7 @@ func fEggCase(x, y float64) float64 {
 // モーグル
 func fMoguls(x, y float64) float64 {
 	var sy float64
-	sx := math.Sin(y*2*math.Pi/cells*6)*math.Sin(x*2*math.Pi/cells*6) + math.Sin(math.Pi/2)
+	sx := math.Sin(y*2*math.Pi/float64(Cells)*6)*math.Sin(x*2*math.Pi/float64(Cells)*6) + math.Sin(math.Pi/2)
 	r := math.Hypot(sx, sy)
 	return r / 4
 }
@@ -56,11 +56,11 @@ func fMoguls(x, y float64) float64 {
 // 乗馬用の鞍
 func fSaddle(x, y float64) float64 {
 	var sx, sy float64
-	sx = math.Cos(x*2*math.Pi/xyrange) + math.Sin(x*2*math.Pi/xyrange*2-math.Pi/3) + math.Sin(math.Pi/2)
+	sx = math.Cos(x*2*math.Pi/XYRange) + math.Sin(x*2*math.Pi/XYRange*2-math.Pi/3) + math.Sin(math.Pi/2)
 	if sx < 0 {
 		sx = 0
 	}
-	filter := math.Cos(y*2*math.Pi/xyrange) + 0.3*math.Sin(y*2*math.Pi/xyrange*2-math.Pi/3) + math.Sin(math.Pi/2)
+	filter := math.Cos(y*2*math.Pi/XYRange) + 0.3*math.Sin(y*2*math.Pi/XYRange*2-math.Pi/3) + math.Sin(math.Pi/2)
 	if filter < 0 {
 		filter = 0
 	}

@@ -17,7 +17,7 @@ var modelFlag = flag.String("model", "Default",
 	"Switch drawing model.\n\tmodel are:\"Default\", \"EggCase\", \"Moguls\"")
 
 // 描画モデルに色を付けるかどうかを指定
-var modelColor = flag.Bool("color", false, "Coloring true/false. default is false.")
+var modelColor = flag.Bool("gradient", false, "Gradient color ON/OFF")
 
 func main() {
 	// flagで描画モデルを切り替える。
@@ -37,7 +37,8 @@ func main() {
 
 	// flagで着色有無を指定
 	if *modelColor {
-		surface.IsColoring = true
+		surface.IsGradientColor = true
 	}
+
 	surface.PrintXML(output)
 }

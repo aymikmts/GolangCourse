@@ -22,8 +22,8 @@ const (
 var Model ModelType = DEFAULT // デフォルトモデル
 
 // 着色有無
-var IsColoring bool = false // デフォルトは無色
-var FillColor = "white"     // デフォルトの色
+var IsGradientColor bool = false // グラデーションの有無
+var FillColor = "white"          // デフォルトの色
 
 const (
 	width, height = 600, 320            // キャンバスの大きさ(画素数)
@@ -34,14 +34,20 @@ const (
 	angle         = math.Pi / 6         // x, y軸の角度 (=30度)
 )
 
+var (
+	Width, Height float64 = width, height
+	Cells                 = cells
+	XYRange               = xyrange
+	ZScale                = zscale
+)
 var sin30, cos30 = math.Sin(angle), math.Cos(angle) // sin(30度), cos(30度)
 
 func PrintXML(out io.Writer) {
 	fmt.Fprintf(out, "<svg xmlns='http://www.w3.org/2000/svg' "+
 		"style='stroke: gray; stroke-width: 0.7' "+
-		"width='%d' height='%d'>", width, height)
-	for i := 0; i < cells; i++ {
-		for j := 0; j < cells; j++ {
+		"width='%d' height='%d'>", Width, Height)
+	for i := 0; i < Cells; i++ {
+		for j := 0; j < Cells; j++ {
 			// [ex01]戻り値okがfalseだったときは、スキップする。
 			ax, ay, ok := corner(i+1, j)
 			if !ok {
@@ -71,8 +77,8 @@ func PrintXML(out io.Writer) {
 
 func corner(i, j int) (sx float64, sy float64, ok bool) {
 	// ます目(i,j)のかどの点(x, y)を見つける。
-	x := xyrange * (float64(i)/cells - 0.5)
-	y := xyrange * (float64(j)/cells - 0.5)
+	x := XYRange * (float64(i)/float64(Cells) - 0.5)
+	y := XYRange * (float64(j)/float64(Cells) - 0.5)
 
 	// 面の高さzを計算する。
 	z := f(x, y)
@@ -84,13 +90,13 @@ func corner(i, j int) (sx float64, sy float64, ok bool) {
 	}
 
 	// [ex03]zに応じて色を算出する
-	if IsColoring {
+	if IsGradientColor {
 		FillColor = calcColor(z)
 	}
 
 	// (x, y, z)を2-D SVGキャンバス(sx, sy)へ等角的に投影。
-	sx = width/2 + (x-y)*cos30*xyscale
-	sy = height/2 + (x+y)*sin30*xyscale - z*zscale
+	sx = Width/2 + (x-y)*cos30*xyscale
+	sy = Height/2 + (x+y)*sin30*xyscale - z*ZScale
 	ok = true
 	return
 }
