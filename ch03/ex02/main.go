@@ -4,10 +4,12 @@
 package main
 
 import (
-	"GolangCourse/ch03/surface"
 	"flag"
 	"io"
 	"os"
+
+	"../surface" // 相対パス指定
+	//"GolangCourse/ch03/surface"	// GOPATH以下指定
 )
 
 var output io.Writer = os.Stdout

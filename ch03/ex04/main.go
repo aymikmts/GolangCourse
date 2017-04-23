@@ -11,9 +11,11 @@ zscale		:z単位あたりの画素数
 package main
 
 import (
-	"GolangCourse/ch03/surface"
 	"log"
 	"net/http"
+
+	"../surface" // 相対パス指定
+	//"GolangCourse/ch03/surface"	// GOPATH以下指定
 )
 
 func main() {
