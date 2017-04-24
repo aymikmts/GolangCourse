@@ -37,6 +37,7 @@ func mandelbrot(z complex128) color.Color {
 	}
 }
 
+// モノクロのマンデルブロ集合の生成
 func mandelbrotMono(z complex128) color.Color {
 	const iterations = 200
 	const contrast = 15
@@ -51,6 +52,7 @@ func mandelbrotMono(z complex128) color.Color {
 	return color.Black
 }
 
+// フルカラーのマンデルブロ集合の生成
 func mandelbrotColor(z complex128) color.Color {
 	const iterations = 200
 	const contrast = 15
@@ -59,7 +61,9 @@ func mandelbrotColor(z complex128) color.Color {
 	for n := uint8(0); n < iterations; n++ {
 		v = v*v + z
 		if cmplx.Abs(v) > 2 {
-			return color.Gray{255 - contrast*n}
+			blue := uint8(255 - contrast*n)
+			red := uint8(contrast * n)
+			return color.YCbCr{200, blue, red}
 		}
 	}
 	return color.Black
