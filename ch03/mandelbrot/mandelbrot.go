@@ -9,9 +9,20 @@ import (
 	"math/cmplx"
 )
 
+// フルカラーか否かを選択
 var IsColoring bool = false
 
-func DrawMandelbrot(out io.Writer) {
+// 描画するものの種類を定義
+type FractalType int
+
+const (
+	MANDELBROT FractalType = iota
+	NEWTON
+)
+
+var Fractal FractalType = MANDELBROT // デフォルトはマンデルブロー集合
+
+func DrawFractal(out io.Writer) {
 	const (
 		xmin, ymin, xmax, ymax = -2, -2, +2, +2
 		width, height          = 1024, 1024
@@ -23,7 +34,16 @@ func DrawMandelbrot(out io.Writer) {
 			x := float64(px)/width*(xmax-xmin) + xmin
 			z := complex(x, y)
 			// 画像の点(px, py)は複素数値zを表している。
-			img.Set(px, py, mandelbrot(z))
+			var color color.Color
+			switch Fractal {
+			case MANDELBROT:
+				color = mandelbrot(z)
+			case NEWTON:
+				color = newton(z)
+			default:
+				color = mandelbrot(z)
+			}
+			img.Set(px, py, color)
 		}
 	}
 	png.Encode(out, img) // 注意: エラーを無視

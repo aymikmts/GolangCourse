@@ -1,4 +1,5 @@
 // Ex05はフルカラーのマンデルブロ集合を描画します。
+// フルカラーマンデルブロ集合の実装は"ch03/mandelbrot/mundelbrotEx05.go"
 package main
 
 import (
@@ -21,5 +22,5 @@ func main() {
 		mandelbrot.IsColoring = true
 	}
 
-	mandelbrot.DrawMandelbrot(output)
+	mandelbrot.DrawFractal(output)
 }
