@@ -12,41 +12,49 @@ import (
 // フルカラーか否かを選択
 var IsColoring bool = false
 
-// 描画するものの種類を定義
+// 描画するフラクタルの種類を定義
 type FractalType int
 
 const (
-	MANDELBROT FractalType = iota
-	NEWTON
+	MANDELBROT FractalType = iota // マンデルブロ集合
+	NEWTON                        // ニュートン法によるフラクタル
 )
 
-var Fractal FractalType = MANDELBROT // デフォルトはマンデルブロー集合
+var Fractal FractalType = MANDELBROT
 
+// 定義値
+const (
+	XMin, YMin, XMax, YMax = -2, -2, +2, +2 // 軸範囲
+	Width, Height          = 1024, 1024     // 描画サイズ
+)
+
+// フラクタル画像の描画
 func DrawFractal(out io.Writer) {
-	const (
-		xmin, ymin, xmax, ymax = -2, -2, +2, +2
-		width, height          = 1024, 1024
-	)
-	img := image.NewRGBA(image.Rect(0, 0, width, height))
-	for py := 0; py < height; py++ {
-		y := float64(py)/height*(ymax-ymin) + ymin
-		for px := 0; px < width; px++ {
-			x := float64(px)/width*(xmax-xmin) + xmin
-			z := complex(x, y)
-			// 画像の点(px, py)は複素数値zを表している。
-			var color color.Color
-			switch Fractal {
-			case MANDELBROT:
-				color = mandelbrot(z)
-			case NEWTON:
-				color = newton(z)
-			default:
-				color = mandelbrot(z)
-			}
-			img.Set(px, py, color)
+	img := image.NewRGBA(image.Rect(0, 0, Width, Height))
+	for py := 0; py < Height; py++ {
+		for px := 0; px < Width; px++ {
+			// 座標値に色情報をセット
+			img.Set(px, py, calcPixelColor(px, py))
 		}
 	}
 	png.Encode(out, img) // 注意: エラーを無視
+}
+
+func calcPixelColor(px, py int) color.Color {
+	y := float64(py)/Height*(YMax-YMin) + YMin
+	x := float64(px)/Width*(XMax-XMin) + XMin
+	z := complex(x, y)
+
+	var color color.Color
+	switch Fractal {
+	case MANDELBROT:
+		color = mandelbrot(z) // 色付き版の実装は"mandelbrotEx05.go"
+	case NEWTON:
+		color = newton(z) // 実装は"mandelbrotEx07.go"
+	default:
+		color = mandelbrot(z)
+	}
+	return color
 }
 
 func mandelbrot(z complex128) color.Color {

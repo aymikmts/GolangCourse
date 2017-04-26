@@ -3,11 +3,12 @@
 package main
 
 import (
-	"GolangCourse/ch03/mandelbrot" // GOPATH以下指定
+	//"GolangCourse/ch03/mandelbrot" // GOPATH以下指定
+	"flag"
 	"io"
 	"os"
-	//"../mandelbrot"	// 相対パス指定
-	"flag"
+
+	"../mandelbrot" // 相対パス指定
 )
 
 var output io.Writer = os.Stdout
