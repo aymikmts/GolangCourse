@@ -34,7 +34,13 @@ func DrawFractal(out io.Writer) {
 	for py := 0; py < Height; py++ {
 		for px := 0; px < Width; px++ {
 			// 座標値に色情報をセット
-			img.Set(px, py, calcPixelColor(px, py))
+			if FormatCompTest == DEFAULT {
+				// default
+				img.Set(px, py, calcPixelColor(px, py))
+			} else {
+				// ex08で使用
+				img.Set(px, py, compCmplxFormat(px, py))
+			}
 		}
 	}
 	png.Encode(out, img) // 注意: エラーを無視
