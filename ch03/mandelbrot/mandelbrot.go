@@ -12,6 +12,9 @@ import (
 // フルカラーか否かを選択
 var IsColoring bool = false
 
+// アンチエイリアスをかけるか否かを選択
+var IsAntiAlias bool = false
+
 // 描画するフラクタルの種類を定義
 type FractalType int
 
@@ -42,6 +45,11 @@ func DrawFractal(out io.Writer) {
 				img.Set(px, py, compCmplxFormat(px, py))
 			}
 		}
+	}
+
+	// ex06で使用
+	if IsAntiAlias {
+		antiAlias(img)
 	}
 	png.Encode(out, img) // 注意: エラーを無視
 }
