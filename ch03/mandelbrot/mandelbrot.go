@@ -32,11 +32,10 @@ const (
 	HiResRatio             = 2              // Ex06で使用。高画質化比率。
 )
 
-var width int = Width
-var height int = Height
-
 // フラクタル画像の描画
 func DrawFractal(out io.Writer) {
+	width := Width
+	height := Height
 	outImg := image.NewRGBA(image.Rect(0, 0, Width, Height))
 
 	// Ex06で使用
@@ -72,8 +71,8 @@ func DrawFractal(out io.Writer) {
 }
 
 func calcPixelColor(px, py int) color.Color {
-	y := float64(py)/float64(height)*(YMax-YMin) + YMin
-	x := float64(px)/float64(width)*(XMax-XMin) + XMin
+	y := float64(py)/float64(Height)*(YMax-YMin) + YMin
+	x := float64(px)/float64(Width)*(XMax-XMin) + XMin
 	z := complex(x, y)
 
 	var color color.Color

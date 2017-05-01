@@ -1,9 +1,18 @@
 #!/bin/bash
-# TODO: 拡大率変えてみる、メモリ量の算出
+# 各条件の画像はbytes.Bufferに出力し、出力前後のメモリ量をStderrで出力する。
+# 計算量軽減のため、Iterations(繰り返し回数)を1に設定してある。
+# 性能についてはtestall.bashを実行して、実行時間を計測する
 cd `dirname $0`
 
-go run main.go -format complex64 > out_cmplx64.png
-go run main.go -format complex128 > out_cmplx128.png
-go run main.go -format big.Float > out_bigFloat.png
+echo --- complex64 ver. ---
+go run main.go -format complex64
+
+echo --- COMPLEX128 ver. ---
+go run main.go -format complex128
+
+echo --- big.Float ver. ---
+go run main.go -format big.Float
+
 # 時間がかかりすぎるためコメントアウト
-#go run main.go -format big.Rat > out_bigRat.png
+echo ---big.Rat ver. ---
+go run main.go -format big.Rat

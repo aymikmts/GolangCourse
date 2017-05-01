@@ -21,8 +21,8 @@ var FormatCompTest FormatType = DEFAULT
 var IterationsVal = 200
 
 func compCmplxFormat(px, py int) color.Color {
-	y := float64(py)/float64(height)*(YMax-YMin) + YMin
-	x := float64(px)/float64(width)*(XMax-XMin) + XMin
+	y := float64(py)/float64(Height)*(YMax-YMin) + YMin
+	x := float64(px)/float64(Width)*(XMax-XMin) + XMin
 
 	var color color.Color
 
@@ -66,6 +66,7 @@ func formatCmplx128(x, y float64) color.Color {
 	const contrast = 15
 
 	var v complex128
+
 	for n := uint8(0); n < iterations; n++ {
 		v = v*v + z
 		if cmplx.Abs(v) > 2 {
@@ -121,6 +122,7 @@ func formatBigRat(x, y float64) color.Color {
 	realZ.SetFloat64(x)
 	imagZ.SetFloat64(y)
 	var a, b big.Rat
+
 	for n := uint8(0); n < iterations; n++ {
 		// 実数部計算
 		// a_n+1 = a_n^2 - b_n^2 + realZ
