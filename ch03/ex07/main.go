@@ -1,4 +1,6 @@
 // Ex07はニュートン法を用いたフラクタル画像を描画します。
+// ニュートン法を用いたフラクタル画像を描画するには、
+// コマンド引数に"-fractal newton"を追加します。
 // 実装は"ch03/mandelbrot/mundelbrotEx07.go"
 package main
 

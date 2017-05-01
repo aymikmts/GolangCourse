@@ -1,4 +1,6 @@
-// Ex08は
+// Ex08はcomplex64, complex128, big.Float, big.Ratの4つの異なる数値の表現を使って同じフラクタルを実装します。
+// Stderrに各条件で画像出力する前後のメモリ量を出力します。
+// 各条件は、コマンド引数に"-format [format type]"を追加します。
 // 実装は"ch03/mandelbrot/mundelbrotEx08.go"
 package main
 

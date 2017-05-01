@@ -1,4 +1,5 @@
 // Ex05はフルカラーのマンデルブロ集合を描画します。
+// フルカラー化するには、コマンド引数に"-color"を追加します。
 // フルカラーマンデルブロ集合の実装は"ch03/mandelbrot/mundelbrotEx05.go"
 package main
 
