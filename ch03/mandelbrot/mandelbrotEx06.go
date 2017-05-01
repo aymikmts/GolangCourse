@@ -1,52 +1,38 @@
 package mandelbrot
 
 import (
-	"fmt"
 	"image"
 	"image/color"
-	"os"
 )
 
-func antiAlias(input *image.RGBA) {
-
-	// not implemented
-	fmt.Fprintf(os.Stderr, "NOT IMPLEMENTED!\n")
-	os.Exit(1)
-
+// 4つのサブピクセルに分割してカラー値の平均を算出する手法のスーパーサンプリングを実行します。
+func antiAlias(input *image.RGBA) *image.RGBA {
 	out := image.NewRGBA(image.Rect(0, 0, Width, Height))
 
-	for j := 0; j < Height-1; j++ {
-		for i := 0; i < Width-1; i++ {
-			// 4pixel四方の色を取得
+	// 高画質化した画像をHiResRatio分だけ飛ばしながら1画素あたりの平均値を算出
+	for j := 0; j < height-1; j += HiResRatio {
+		for i := 0; i < width-1; i += HiResRatio {
+			// 2pixel四方の色を取得
 			r1, g1, b1, _ := input.At(i, j).RGBA()
 			r2, g2, b2, _ := input.At(i+1, j).RGBA()
 			r3, g3, b3, _ := input.At(i, j+1).RGBA()
 			r4, g4, b4, _ := input.At(i+1, j+1).RGBA()
 
-			// r := uint8(float64(ulR+urR+blR+brR) / 4.0)
-			// g := uint8(float64(ulG+urG+blG+brG) / 4.0)
-			// b := uint8(float64(ulB+urB+blB+brB) / 4.0)
 			rTmp := (r1 + r2 + r3 + r4) / 4
-			if rTmp > 0xFF || rTmp < 0x00 {
-				fmt.Fprintf(os.Stderr, "R is out. [%v, %v](%v, %v, %v, %v): %v\n", i, j, r1, r2, r3, r4, rTmp)
-			}
-			r := uint8(rTmp)
+			// 32bitから8bitに変換
+			r := uint8(rTmp * 0xff / 0xffff)
 
 			gTmp := (g1 + g2 + g3 + g4) / 4
-			if gTmp > 0xFFFF || gTmp < 0x00 {
-				fmt.Fprintf(os.Stderr, "G is out. [%v, %v](%v, %v, %v, %v): %v\n", i, j, g1, g2, g3, g4, gTmp)
-			}
-			g := uint8(gTmp)
+			// 32bitから8bitに変換
+			g := uint8(gTmp * 0xff / 0xffff)
 
 			bTmp := (b1 + b2 + b3 + b4) / 4
-			if bTmp > 0xFFFF || bTmp < 0x00 {
-				fmt.Fprintf(os.Stderr, "B is out. [%v, %v](%v, %v, %v, %v): %v\n", i, j, b1, b2, b3, b4, bTmp)
-			}
-			b := uint8(bTmp)
+			// 32bitから8bitに変換
+			b := uint8(bTmp * 0xff / 0xffff)
 
 			color := color.RGBA{r, g, b, 0xff}
-			out.SetRGBA(i, j, color)
+			out.SetRGBA(i/HiResRatio, j/HiResRatio, color)
 		}
 	}
-	*input = *out
+	return out
 }

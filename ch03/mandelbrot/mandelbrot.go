@@ -29,34 +29,51 @@ var Fractal FractalType = MANDELBROT
 const (
 	XMin, YMin, XMax, YMax = -2, -2, +2, +2 // 軸範囲
 	Width, Height          = 1024, 1024     // 描画サイズ
+	HiResRatio             = 2              // Ex06で使用。高画質化比率。
 )
+
+var width int = Width
+var height int = Height
 
 // フラクタル画像の描画
 func DrawFractal(out io.Writer) {
-	img := image.NewRGBA(image.Rect(0, 0, Width, Height))
-	for py := 0; py < Height; py++ {
-		for px := 0; px < Width; px++ {
+	outImg := image.NewRGBA(image.Rect(0, 0, Width, Height))
+
+	// Ex06で使用
+	// 有効化のときは、一時的に高画質化する
+	if IsAntiAlias {
+		width *= HiResRatio
+		height *= HiResRatio
+	}
+
+	tmpImg := image.NewRGBA(image.Rect(0, 0, width, height))
+	for py := 0; py < height; py++ {
+		for px := 0; px < width; px++ {
 			// 座標値に色情報をセット
 			if FormatCompTest == DEFAULT {
 				// default
-				img.Set(px, py, calcPixelColor(px, py))
+				tmpImg.Set(px, py, calcPixelColor(px, py))
 			} else {
 				// ex08で使用
-				img.Set(px, py, compCmplxFormat(px, py))
+				tmpImg.Set(px, py, compCmplxFormat(px, py))
 			}
 		}
 	}
 
-	// ex06で使用
+	// Ex06
+	// 有効化のときは、ダウンサンプリングする
 	if IsAntiAlias {
-		antiAlias(img)
+		outImg = antiAlias(tmpImg)
+	} else {
+		outImg = tmpImg
 	}
-	png.Encode(out, img) // 注意: エラーを無視
+
+	png.Encode(out, outImg) // 注意: エラーを無視
 }
 
 func calcPixelColor(px, py int) color.Color {
-	y := float64(py)/Height*(YMax-YMin) + YMin
-	x := float64(px)/Width*(XMax-XMin) + XMin
+	y := float64(py)/float64(height)*(YMax-YMin) + YMin
+	x := float64(px)/float64(width)*(XMax-XMin) + XMin
 	z := complex(x, y)
 
 	var color color.Color

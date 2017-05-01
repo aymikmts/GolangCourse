@@ -21,8 +21,8 @@ var FormatCompTest FormatType = DEFAULT
 var IterationsVal = 200
 
 func compCmplxFormat(px, py int) color.Color {
-	y := float64(py)/Height*(YMax-YMin) + YMin
-	x := float64(px)/Width*(XMax-XMin) + XMin
+	y := float64(py)/float64(height)*(YMax-YMin) + YMin
+	x := float64(px)/float64(width)*(XMax-XMin) + XMin
 
 	var color color.Color
 
