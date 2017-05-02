@@ -11,8 +11,8 @@ func antiAlias(input *image.RGBA) *image.RGBA {
 
 	// 高画質化した画像の2pixel四方分の色平均を求め、
 	// 出力画像の1画素の値とする。
-	for j := 0; j < Height-1; j++ {
-		for i := 0; i < Width-1; i++ {
+	for j := 0; j < int(height)-1; j++ {
+		for i := 0; i < int(width)-1; i++ {
 			// 2pixel四方の色を取得
 			r1, g1, b1, _ := input.At(i, j).RGBA()
 			r2, g2, b2, _ := input.At(i+1, j).RGBA()
@@ -32,7 +32,7 @@ func antiAlias(input *image.RGBA) *image.RGBA {
 			b := uint8(bTmp * 0xff / 0xffff)
 
 			color := color.RGBA{r, g, b, 0xff}
-			out.SetRGBA(i, j, color)
+			out.SetRGBA(i/HiResRatio, j/HiResRatio, color)
 		}
 	}
 	return out
