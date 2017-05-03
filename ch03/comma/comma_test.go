@@ -24,3 +24,33 @@ func TestCommaWithBuffer(t *testing.T) {
 		}
 	}
 }
+
+func TestCommaSignedFloat(t *testing.T) {
+	var tests = []struct {
+		input string
+		want  string
+	}{
+		{"12345", "1.2345e+04"},
+		{"-12345", "-1.2345e+04"},
+		{"+12345", "+1.2345e+04"},
+		{"123.45", "1.2345e+02"},
+		{"-123.45", "-1.2345e+02"},
+		{"+123.45", "+1.2345e+02"},
+		{"0.12345", "1.2345e-01"},
+		{"-0.12345", "-1.2345e-01"},
+		{"+0.12345", "+1.2345e-01"},
+		{"0.0012345", "1.2345e-03"},
+		{"-0.0012345", "-1.2345e-03"},
+		{"+0.0012345", "+1.2345e-03"},
+		{"0012345", "1.2345e+04"},
+		{"-0012345", "-1.2345e+04"},
+		{"+0012345", "+1.2345e+04"},
+	}
+
+	for _, test := range tests {
+		got := CommaSignedFloat(test.input)
+		if got != test.want {
+			t.Errorf("CommaSignedFloat(%v) = %v", test.input, got)
+		}
+	}
+}
