@@ -1,4 +1,5 @@
-//Ex10は、bytes.Bufferを用いて再帰呼び出しをせずに、10進表記整数文字列にカンマを挿入します。
+// Ex10は、bytes.Bufferを用いて再帰呼び出しをせずに、10進表記整数文字列にカンマを挿入します。
+// 実装は"comma/commaEx10.go"
 package main
 
 import (
