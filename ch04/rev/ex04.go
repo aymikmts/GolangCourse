@@ -3,9 +3,11 @@ package rev
 // Rotateはint型のスライスをrot分回転させます。
 // rotが正の値のときは左に、負の値は右に回転します。
 func Rotate(s []int, rot int) {
+	rot %= len(s)
 	if rot < 0 {
 		rot = len(s) + rot
 	}
+
 	// Rotate分をコピー
 	tmp := make([]int, rot)
 	copy(tmp, s[:rot])
