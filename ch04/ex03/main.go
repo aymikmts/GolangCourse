@@ -1,10 +1,11 @@
 // Ex03はint配列を直接逆順に並び替えます。
 // 配列の大きさは"6"に固定です。
 // 配列は標準入力より入力された数値から生成します。
+// 実装は"rev/ex03.go"
 package main
 
 import (
-	//"GolangCourse/ch04/rev""
+	//"GolangCourse/ch04/rev"
 
 	"bufio"
 	"fmt"
