@@ -24,12 +24,19 @@ type Issue struct {
 	Title     string
 	State     string
 	User      *User
-	CreatedAt time.Time `json:"created_at"`
-	Body      string    // マークダウン(Markdown)形式
+	Milestone *Milestone // ex14用に追加
+	CreatedAt time.Time  `json:"created_at"`
+	Body      string     // マークダウン(Markdown)形式
 }
 
 type User struct {
 	Login   string
+	HTMLURL string `json:"html_url"`
+}
+
+// ex14用に追加
+type Milestone struct {
+	Title   string
 	HTMLURL string `json:"html_url"`
 }
 
