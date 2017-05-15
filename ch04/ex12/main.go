@@ -2,11 +2,13 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 const XKCDURL = "https://xkcd.com/"
@@ -21,7 +23,8 @@ type XKCDResult struct {
 	Img        string
 }
 
-func DownloadJSON(num string) error {
+// downloadJSONは、指定された番号のJSONデータをxkcd.comから取得し、保存します。
+func downloadJSON(num string) error {
 	resp, err := http.Get(XKCDURL + num + JSONURLSuffix)
 	if err != nil {
 		return err
@@ -32,16 +35,34 @@ func DownloadJSON(num string) error {
 		return fmt.Errorf("failed to get json: %s", resp.Status)
 	}
 
-	// var result XKCDResult
-	// if err := json.NewDecoder(resp.Body).Decode(result); err != nil {
-	// 	resp.Body.Close()
-	// 	return err
-	// }
-	// resp.Body.Close()
-
 	// save as a json file
-	data, err := json.MarshalIndent(resp.Body, "", "    ")
+	data, err := ioutil.ReadAll(resp.Body)
+	resp.Body.Close()
+	if err != nil {
+		log.Fatalf("Failed to get JSON: %s", err)
+	}
+
+	fname := "./" + num + ".json"
+	err = ioutil.WriteFile(fname, data, os.ModePerm)
+	if err != nil {
+		log.Fatalf("Failed to save json file: %s", err)
+	}
+
 	return nil
+}
+
+// showIndexは、ローカルにあるJSONからインデックスを作成し、表示します。
+func showIndex() {
+	files, err := ioutil.ReadDir(".")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		if strings.HasSuffix(file.Name(), ".json") {
+			fmt.Println(file.Name())
+		}
+	}
 }
 
 func main() {
@@ -52,7 +73,17 @@ func main() {
 	flag.Parse()
 
 	if *num != "" {
-		url := XKCDURL + *num + JSONURLSuffix
-		fmt.Println(url)
+		// json file is not exist, download from URL
+		if _, err := os.Stat("./" + *num + ".json"); err != nil {
+			err := downloadJSON(*num)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "error: %v", err)
+			}
+		} else {
+			fmt.Printf("JSON file is already exist.\n")
+		}
 	}
+
+	showIndex()
+
 }
