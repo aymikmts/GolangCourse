@@ -1,4 +1,4 @@
-// Ex13は、映画名を入力すると、Open Movie Databeseからポスターをダウンロードし、保存します。
+// Ex13は、映画名を入力すると、Open Movie Databeseからポスターをダウンロードします。
 package main
 
 import (
@@ -9,22 +9,24 @@ import (
 	"net/url"
 	"os"
 	"strings"
+	"unicode"
 )
 
 const OMDBURL = "http://www.omdbapi.com/"
 
 type OMDBResult struct {
-	Title  string
-	Year   string
-	Poster string
+	Title    string
+	Year     string
+	Poster   string
+	Response string // 映画情報の有無
 }
 
-// SearchIssuesはGitHubのイシュートラッカーに問い合わせます。
+// SearchMovieはOMDBに映画情報を問い合わせます。
 func SearchMovie(terms []string) (*OMDBResult, error) {
 	q := url.QueryEscape(strings.Join(terms, " "))
-	fmt.Printf("q:%v\nurl:%v\n", q, OMDBURL+"?t="+q)
 	resp, err := http.Get(OMDBURL + "?t=" + q)
 	if err != nil {
+		resp.Body.Close()
 		return nil, err
 	}
 	defer resp.Body.Close()
@@ -37,13 +39,20 @@ func SearchMovie(terms []string) (*OMDBResult, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
 	}
-	fmt.Printf("%v\n", result)
 
 	return &result, nil
 }
 
-func SavePoster(data *OMDBResult) error {
-	resp, err := http.Get(data.Poster)
+// SavePosterはポスターを保存します。
+func SavePoster(movieData *OMDBResult) error {
+
+	// 映画情報がなかったときはerror
+	if movieData.Response == "False" {
+		return fmt.Errorf("Movie is not found.")
+	}
+
+	// JSONデータをGet
+	resp, err := http.Get(movieData.Poster)
 	defer resp.Body.Close()
 	if err != nil {
 		return err
@@ -53,36 +62,42 @@ func SavePoster(data *OMDBResult) error {
 		return fmt.Errorf("save the poster failed: %s", resp.Status)
 	}
 
-	// body, err := ioutil.ReadAll(resp.Body)
-	// if err != nil {
-	// 	return err
-	// }
-
-	//title := strings.TrimSpace(data.Title)
-	//fname := "./" + title + ".jpg"
-	fname := "./" + "tmpname" + ".jpg"
-	fmt.Println(fname)
-	file, err := os.Create(fname)
+	// 画像データの保存
+	file, err := os.Create(imageName(movieData.Title))
 	if err != nil {
 		return err
 	}
 	defer file.Close()
 
-	//file.Write(body)
 	io.Copy(file, resp.Body)
 
 	return nil
 }
 
+// imageNameは、タイトルから画像のファイル名を設定します。
+func imageName(title string) string {
+	var ret []rune
+
+	// アルファベットと数値を抽出
+	s := []rune(title)
+	for _, r := range s {
+		if unicode.IsLetter(r) || unicode.IsNumber(r) {
+			ret = append(ret, r)
+		}
+	}
+
+	return "./" + string(ret) + ".jpg"
+}
+
 func main() {
-	data, err := SearchMovie(os.Args[1:])
+	movieData, err := SearchMovie(os.Args[1:])
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
-	err = SavePoster(data)
+	err = SavePoster(movieData)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
 }

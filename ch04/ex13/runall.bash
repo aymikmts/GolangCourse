@@ -1,6 +1,9 @@
 #!/bin/bash
 cd `dirname $0`
 
-echo !!! TODO: 映画名によって保存ファイル名を変える !!!
-echo !!! TODO: 映画名がヒットしなかったときなどのエラー処理は未対応 !!!
+# 正常ケース
 go run main.go harry potter
+
+# エラーケース(映画名がヒットしなかったとき)
+go run main.go hurry potter
+
