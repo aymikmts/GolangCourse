@@ -15,8 +15,6 @@ import (
 
 func main() {
 
-	fmt.Fprintf(os.Stderr, "!!!\n\tThis program does not work completely yet.\n\tIt works only 8-byte unicode charactor.\n!!!\n\n")
-
 	// 配列の作成
 	input := bufio.NewScanner(os.Stdin)
 	for input.Scan() {
@@ -24,11 +22,11 @@ func main() {
 
 		array = []byte(input.Text())
 
-		fmt.Printf("input:\n %[1]s\n %[1]b\n", array)
+		fmt.Printf("input:\n %[1]s\n", array)
 
 		// Ex07の実行
 		rev.ReverseUnicodeByte(array)
 
-		fmt.Printf("output:\n %[1]s\n %[1]b\n", array)
+		fmt.Printf("output:\n %[1]s\n\n", array)
 	}
 }
