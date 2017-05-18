@@ -6,8 +6,9 @@ import (
 	"log"
 	"os"
 	"time"
-	//"../github"
-	"GolangCourse/ch04/github"
+
+	"../github"
+	//"GolangCourse/ch04/github"
 )
 
 type IssueTerm int

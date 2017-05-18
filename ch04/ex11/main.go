@@ -3,11 +3,13 @@
 package main
 
 import (
-	"GolangCourse/ch04/github"
+	//"GolangCourse/ch04/github"
 	"flag"
 	"fmt"
 	"log"
 	"os"
+
+	"../github"
 )
 
 var create = flag.Bool("create", false, "create new issue.")
@@ -40,7 +42,6 @@ func main() {
 	}
 	if *edit != 0 {
 		github.IssueNum = *edit
-
 		var entry github.IssueEntry
 		entry.Title = *title
 		entry.Body = *body
