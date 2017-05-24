@@ -20,9 +20,10 @@ func main() {
 
 // printTextNodeは、HTMLドキュメントツリー内でテキストノードの内容を表示します。
 func printTextNode(stack []string, n *html.Node) {
-	if n.Type == html.ElementNode {
+	switch n.Type {
+	case html.ElementNode:
 		stack = append(stack, n.Data) // push tag
-	} else if n.Type == html.TextNode {
+	case html.TextNode:
 		length := len(stack)
 		if length > 0 {
 			if stack[length-1] != "script" && stack[length-1] != "style" {
