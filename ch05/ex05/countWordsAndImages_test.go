@@ -1,4 +1,4 @@
-package countwordsandimages
+package main
 
 import (
 	"fmt"
