@@ -30,11 +30,12 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Ex08 error: %v\n", err)
 		}
 
+		fmt.Fprintf(out, "search ID:\n  %s\nresult:\n", input[0])
 		node := ElementByID(doc, input[0])
 		if node != nil {
-			fmt.Fprintf(out, "data: %s\nattribute: %v\n", node.Data, node.Attr)
+			fmt.Fprintf(out, "  data: %s\n  attribute: %v\n", node.Data, node.Attr)
 		} else {
-			fmt.Fprintf(out, "node is nil.\n")
+			fmt.Fprintf(out, "  no hit.\n")
 		}
 	}
 }
@@ -88,7 +89,6 @@ func postSearchElement(n *html.Node, id string) bool {
 }
 
 func ElementByID(doc *html.Node, id string) *html.Node {
-	fmt.Fprintf(out, "id: %s\n", id)
 	_, node := forEachNode(doc, id, preSearchElement, postSearchElement)
 	return node
 }
