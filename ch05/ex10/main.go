@@ -24,11 +24,16 @@ var prereqs = map[string]map[string]bool{
 }
 
 func main() {
-	for i, course := range topoSort(prereqs) {
+	courses := topoSort(prereqs)
+
+	for i, course := range courses {
 		fmt.Printf("%d:\t%s\n", i+1, course)
 	}
+
+	fmt.Printf("isToporicalSorted: %v\n", isTopologicalSorted(courses))
 }
 
+// topoSortは、深さ優先探索して正当な順序を計算するトポロジカルソートです。
 func topoSort(m map[string]map[string]bool) []string {
 	var order []string
 	seen := make(map[string]bool)
@@ -53,32 +58,22 @@ func topoSort(m map[string]map[string]bool) []string {
 	return order
 }
 
-func isToporicalSorted(input []string) bool {
-	node := make(map[string]int)
+// isTopologicalSortedは、スライスがトポロジカル順序になっているかどうかを返します。
+func isTopologicalSorted(input []string) bool {
+	node := make(map[string]bool)
+
+	for i := 0; i < len(input); i++ {
+		node[input[i]] = true
+		if i == 0 {
+			continue
+		}
+
+		for key, _ := range prereqs[input[i]] {
+			if node[key] == false {
+				return false
+			}
+		}
+	}
 
 	return true
 }
-
-//func topoSort(m map[string][]string) []string {
-//	var order []string
-//	seen := make(map[string]bool)
-//	var visitAll func(items []string)
-//
-//	visitAll = func(items []string) {
-//		for _, item := range items {
-//			if !seen[item] {
-//				seen[item] = true
-//				visitAll(m[item])
-//				order = append(order, item)
-//			}
-//		}
-//	}
-//
-//	var keys []string
-//	for key := range m {
-//		keys = append(keys, key)
-//	}
-//	sort.Strings(keys)
-//	visitAll(keys)
-//	return order
-//}
