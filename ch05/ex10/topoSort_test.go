@@ -11,11 +11,11 @@ var test1 = map[string]map[string]bool{
 	"no2": {"no1": true},
 }
 
-func TestIsToporicalSort(t *testing.T) {
+func TestIsTopologicalSort(t *testing.T) {
 	var tests = []struct {
-		input map[string]map[string]bool
-		ts    []string
-		want  bool
+		source map[string]map[string]bool
+		ts     []string
+		want   bool
 	}{
 		{test1, []string{"no1", "no2", "no3", "no4", "no5"}, true},
 		{test1, []string{"no1", "no2", "no3", "no5", "no4"}, true},
@@ -31,8 +31,7 @@ func TestIsToporicalSort(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		prereqs = test.input
-		got := isTopologicalSorted(test.ts)
+		got := isTopologicalSorted(test.ts, test.source)
 		if got != test.want {
 			t.Errorf("want is %v, but got is %v. topo sort: %v\n", test.want, got, test.ts)
 		}

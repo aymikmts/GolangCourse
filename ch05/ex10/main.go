@@ -30,7 +30,7 @@ func main() {
 		fmt.Printf("%d:\t%s\n", i+1, course)
 	}
 
-	fmt.Printf("isToporicalSorted: %v\n", isTopologicalSorted(courses))
+	fmt.Printf("isToporicalSorted: %v\n", isTopologicalSorted(courses, prereqs))
 }
 
 // topoSortは、深さ優先探索して正当な順序を計算するトポロジカルソートです。
@@ -59,7 +59,7 @@ func topoSort(m map[string]map[string]bool) []string {
 }
 
 // isTopologicalSortedは、スライスがトポロジカル順序になっているかどうかを返します。
-func isTopologicalSorted(input []string) bool {
+func isTopologicalSorted(input []string, source map[string]map[string]bool) bool {
 	node := make(map[string]bool)
 
 	for i := 0; i < len(input); i++ {
@@ -68,7 +68,7 @@ func isTopologicalSorted(input []string) bool {
 			continue
 		}
 
-		for key, _ := range prereqs[input[i]] {
+		for key, _ := range source[input[i]] {
 			if node[key] == false {
 				return false
 			}
