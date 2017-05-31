@@ -69,7 +69,7 @@ func isTopologicalSorted(input []string, source map[string]map[string]bool) bool
 		}
 
 		for key, _ := range source[input[i]] {
-			if node[key] == false {
+			if !node[key] {
 				return false
 			}
 		}
