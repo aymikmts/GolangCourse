@@ -65,6 +65,7 @@ func topoSort(m map[string][]string) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return order, nil
 }
 
@@ -72,6 +73,7 @@ func topoSort(m map[string][]string) ([]string, error) {
 func isTopologicalSorted(ts []string, source map[string][]string) error {
 	node := make(map[string]bool)
 
+	var isNotTopo bool
 	for i := 0; i < len(ts); i++ {
 		node[ts[i]] = true
 		if i == 0 {
@@ -83,12 +85,16 @@ func isTopologicalSorted(ts []string, source map[string][]string) error {
 				for _, key2 := range source[key] {
 					if node[key2] {
 						return fmt.Errorf("\"%v\" and \"%v\" is cycled.\n", key, key2)
-
 					}
 				}
-				return fmt.Errorf("is not topological sorted.\n")
+				// cycleエラーがあればそちらを優先する
+				isNotTopo = true
 			}
 		}
+	}
+
+	if isNotTopo {
+		return fmt.Errorf("is not topological sorted.\n")
 	}
 
 	return nil
