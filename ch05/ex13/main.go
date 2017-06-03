@@ -15,6 +15,7 @@ import (
 )
 
 var targetHost string
+var out io.Writer = os.Stdout
 
 // breadthFirstはworklist内の個々の項目に対してfを呼び出します。
 // fから返されたすべての項目はworklistへ追加されます。
@@ -62,7 +63,7 @@ func download(item string) {
 
 	dirName := "data" + targetHost + dir
 	fname := dirName + "/" + base
-	fmt.Println(fname)
+	fmt.Fprintln(out, fname)
 	err = os.MkdirAll(dirName, 0777)
 	if err != nil {
 		log.Fatalln(err)
@@ -79,7 +80,7 @@ func download(item string) {
 
 // crawlは、URLを表示し、リンクを抽出し、抽出されたリンクも訪れるようにリンクを返します。
 func crawl(url string) []string {
-	//fmt.Println(url)
+	//fmt.Fprintln(out, url)
 	list, err := links.Extract(url)
 	if err != nil {
 		log.Print(err)
@@ -94,7 +95,7 @@ func main() {
 		log.Printf("failed to parse url: %s err: %v\n", os.Args[1], err)
 	}
 	targetHost = "/" + u.Host
-	fmt.Printf("targetHost: %v\n", targetHost)
+	fmt.Fprintf(out, "targetHost: %v\n", targetHost)
 	// コマンドライン引数から開始して、
 	// ウェブを幅優先でクロールする
 	breadthFirst(crawl, os.Args[1:])
