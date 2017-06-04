@@ -4,7 +4,7 @@ package main
 import (
 	"fmt"
 
-	"./intset"
+	"../intset"
 )
 
 func main() {
