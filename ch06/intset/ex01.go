@@ -24,14 +24,7 @@ func (s *IntSet) Remove(x int) {
 
 // Clearはセットからすべての要素を取り除きます。
 func (s *IntSet) Clear() {
-	for i, word := range s.words {
-		if word == 0 {
-			continue
-		}
-		for j := 0; j < 64; j++ {
-			s.words[i] &^= 1 << uint(j)
-		}
-	}
+	s.words = []uint64{}
 }
 
 // Copyはセットのコピーを返します。
