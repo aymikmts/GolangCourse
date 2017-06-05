@@ -4,13 +4,14 @@ import (
 	"testing"
 )
 
-func makeDataSet(s []int) *IntSet {
-	var set IntSet
-	for _, v := range s {
-		set.Add(v)
-	}
-	return &set
-}
+// データセットを作成する(ex01_test.goに定義)
+//func makeDataSet(s []int) *IntSet {
+//	var set IntSet
+//	for _, v := range s {
+//		set.Add(v)
+//	}
+//	return &set
+//}
 
 func TestIntersectWith(t *testing.T) {
 	var tests = []struct {
