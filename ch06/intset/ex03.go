@@ -16,8 +16,6 @@ func (s *IntSet) DifferenceWith(t *IntSet) {
 	for i := 0; i < len(s.words); i++ {
 		if i < len(t.words) {
 			s.words[i] &^= t.words[i]
-		} else {
-			s.words[i] = 0
 		}
 	}
 }
