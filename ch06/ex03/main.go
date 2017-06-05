@@ -1,4 +1,4 @@
-// Ex03は、
+// Ex03は、IntersectWith, DifferenceWith, SymmetricDifferenceを実行します。
 package main
 
 import (
