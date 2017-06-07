@@ -2,15 +2,12 @@
 package tempconv
 
 import (
-	"fmt"
 	"math"
 )
 
 type Celsius float64
 type Fahrenheit float64
 type Kelvin float64
-
-type celsiusFlag struct{ Celsius }
 
 const (
 	AbsoluteZeroC Celsius = -273.15
@@ -43,23 +40,4 @@ func KToF(k Kelvin) Fahrenheit { return Fahrenheit(CToF(KToC(k))) }
 func round(f float64, places int) float64 {
 	shift := math.Pow(10, float64(places))
 	return math.Floor(f*shift+.5) / shift
-}
-
-func (c Celsius) String() string    { return fmt.Sprintf("%g℃", c) }
-func (f Fahrenheit) String() string { return fmt.Sprintf("%g℉", f) }
-func (k Kelvin) String() string     { return fmt.Sprintf("%gK", k) }
-
-func (f *celsiusFlag) Set(s string) error {
-	var unit string
-	var value float64
-	fmt.Sscanf(s, "%f%s", &value, &unit)
-	switch unit {
-	case "C", "℃":
-		f.Celsius = Celsius(value)
-		return nil
-	case "F", "℉":
-		f.Celsius = FtoC(Fahrenheit(value))
-		return nil
-	}
-	return fmt.Errorf("invalid temperature %q", s)
 }
