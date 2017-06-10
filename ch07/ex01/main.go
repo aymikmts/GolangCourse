@@ -42,15 +42,15 @@ func (c *WordCounter) Write(p []byte) (int, error) {
 }
 
 func main() {
-
-	var wc WordCounter
 	str := "hello world!\n Hello World!\n こんにちは　世界\n"
 	fmt.Printf("str:\n %s\n", str)
-	wc.Write([]byte(str))
+
+	var wc WordCounter
+	fmt.Fprintf(&wc, "%s", str)
 	fmt.Printf("word count: %d\n", wc)
 
 	var lc LineCounter
-	lc.Write([]byte(str))
+	fmt.Fprintf(&lc, "%s", str)
 	fmt.Printf("line count: %d\n", lc)
 
 }

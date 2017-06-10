@@ -1,6 +1,9 @@
 package main
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestWordCounterWrite(t *testing.T) {
 	var tests = []struct {
@@ -17,6 +20,12 @@ func TestWordCounterWrite(t *testing.T) {
 	for _, test := range tests {
 		var c WordCounter
 		c.Write(test.input)
+		if int(c) != test.want {
+			t.Errorf("input: %v\ngot is %d, but want is %d\n.", test.input, c, test.want)
+		}
+
+		c = 0
+		fmt.Fprintf(&c, "%s", test.input)
 		if int(c) != test.want {
 			t.Errorf("input: %v\ngot is %d, but want is %d\n.", test.input, c, test.want)
 		}
@@ -38,6 +47,12 @@ func TestLineCounterWrite(t *testing.T) {
 	for _, test := range tests {
 		var c LineCounter
 		c.Write(test.input)
+		if int(c) != test.want {
+			t.Errorf("input: %v\ngot is %d, but want is %d\n.", test.input, c, test.want)
+		}
+
+		c = 0
+		fmt.Fprintf(&c, "%s", test.input)
 		if int(c) != test.want {
 			t.Errorf("input: %v\ngot is %d, but want is %d\n.", test.input, c, test.want)
 		}
