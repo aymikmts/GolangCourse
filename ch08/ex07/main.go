@@ -10,6 +10,8 @@ import (
 	"path"
 	"strings"
 
+	"GolangCourse/ch08/ex07/prettyprint" // リンクをローカルのものを使用するように置換する
+
 	"gopl.io/ch5/links"
 )
 
@@ -81,10 +83,21 @@ func download(item string) {
 	defer f.Close()
 	fmt.Printf("%s\n", f.Name())
 
-	_, err = io.Copy(f, resp.Body)
+	// リンクをローカルのものを参照するように修正する
+	buf, err := prettyprint.ModifyLink(resp.Body)
 	if err != nil {
 		log.Println(err)
 	}
+	//buf := prettyprint.ModifyLink(resp.Body)
+	_, err = io.Copy(f, buf)
+	if err != nil {
+		log.Println(err)
+	}
+
+	// _, err = io.Copy(f, resp.Body)
+	// if err != nil {
+	// 	log.Println(err)
+	// }
 }
 
 // crawlは、URLを表示し、リンクを抽出し、抽出されたリンクも訪れるようにリンクを返します。
