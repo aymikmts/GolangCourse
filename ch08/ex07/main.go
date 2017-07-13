@@ -84,7 +84,7 @@ func download(item string) {
 	fmt.Printf("%s\n", f.Name())
 
 	// リンクをローカルのものを参照するように修正する
-	buf, err := prettyprint.ModifyLink(resp.Body)
+	buf, err := prettyprint.ModifyLink(resp.Body, targetHost)
 	if err != nil {
 		log.Println(err)
 	}

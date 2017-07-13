@@ -4,20 +4,22 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"net/url"
+	"os"
 
 	"golang.org/x/net/html"
 )
 
 var buf *bytes.Buffer
+var hostName string
 
-func ModifyLink(body io.Reader) (*bytes.Buffer, error) {
-	// scanner := bufio.NewScanner(body)
-	// for scanner.Scan() {
-	// 	line := scanner.Text()
-	// 	if strings.Contains(line, "a href") {
-	// 		fmt.Printf("%s\n", line)
-	// 	}
-	// }
+func ModifyLink(body io.Reader, targetHost *url.URL) (*bytes.Buffer, error) {
+	if targetHost != nil {
+		hostName = targetHost.String()
+		//fmt.Printf("ModifyLink: %s\n", hostName)
+	} else {
+		fmt.Fprintf(os.Stderr, "targetHost is nil.\n")
+	}
 
 	buf = new(bytes.Buffer)
 	doc, err := html.Parse(body)
@@ -61,7 +63,7 @@ func startNode(n *html.Node) {
 }
 
 func startTextNode(n *html.Node) {
-	fmt.Printf("%s", n.Data)
+	fmt.Fprintf(buf, "%s", n.Data)
 }
 
 func startElementNode(n *html.Node) {
@@ -121,17 +123,31 @@ func attributes(attr []html.Attribute) string {
 		if i != 0 {
 			b.WriteString(" ")
 		}
+
+		val := a.Val
+		// if a.Key == "href" {
+		// 	//fmt.Printf("attributes: %s %s\n", a.Key, a.Val)
+		// 	if strings.Contains(val, hostName) {
+		// 		//fmt.Printf("targetHost[%s] contains: %s\n", hostName, val)
+		// 		val = strings.Replace(val, hostName+"/", "", 1)
+		// 		//fmt.Printf("%v\n", val)
+		// 		if path.Ext(val) == "" {
+		// 			val += "index.html"
+		// 		}
+		// 		fmt.Printf("URL: %s -> %s\n", a.Val, val)
+		// 	}
+		// }
 		if a.Namespace == "" {
 			b.WriteString(a.Key)
 			b.WriteString(`="`)
-			b.WriteString(a.Val)
+			b.WriteString(val)
 			b.WriteString(`"`)
 		} else {
 			b.WriteString(a.Namespace)
 			b.WriteString(":")
 			b.WriteString(a.Key)
 			b.WriteString(`="`)
-			b.WriteString(a.Val)
+			b.WriteString(val)
 			b.WriteString(`"`)
 		}
 	}
