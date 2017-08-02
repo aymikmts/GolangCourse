@@ -13,14 +13,6 @@ type List struct {
 }
 
 func main() {
-	// 	// 引数でパスを指定
-	// 	// "go list -json "引数"" でjsonファイルを取得
-	// 	// jsonファイルをParse
-	// 	// jsonの"Imports"を[]stringに入れる
-	// 	// []stringを再帰的にgo listする
-
-	// 	// 参考： ch8/crawl
-	// 	// json: ch04/ex13 (poster), ch4/movie
 
 	if len(os.Args) == 1 {
 		fmt.Printf("usage: ./ex04 [package path]\n")
@@ -45,19 +37,6 @@ func main() {
 			}
 		}
 	}
-
-	// out, err := exec.Command("go", "list", "-json", os.Args[1]).Output()
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	// //fmt.Println(string(out))
-
-	// var list List
-	// err = json.Unmarshal(out, &list)
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
-	//fmt.Println(list.Imports)
 }
 
 var tokens = make(chan struct{}, 20)
@@ -78,25 +57,3 @@ func crawl(path string) []string {
 	<-tokens
 	return list.Deps
 }
-
-// func main(){
-// 	// 引数でパスを指定
-// 	// "go list -json "引数"" でjsonファイルを取得
-// 	// jsonファイルをParse
-// 	// jsonの"Imports"を[]stringに入れる
-// 	// []stringを再帰的にgo listする
-
-// 	// 参考： ch8/crawl
-// 	// json: ch04/ex13 (poster), ch4/movie
-
-// 	if len(os.Args) == 1 {
-// 		log.Fatalf("need an augment.\n usage: ./ex04 [package path]\n")
-// 	}
-
-// 	command := "go list " + os.Args[1]
-// 	out, err := exec.Command(command, "-json").Output()
-// 	if err != nil {
-// 		log.Fatalln(err)
-// 	}
-// 	fmt.Println(out)
-// }
