@@ -1,9 +1,12 @@
 package main
 
-import "os"
-import "fmt"
-import "net"
-import "os/exec"
+import (
+	"fmt"
+	"log"
+	"net"
+	"os"
+	"os/exec"
+)
 
 func (c *client) cmdCd(cmds []string) error {
 	if len(cmds) < 2 {
@@ -12,12 +15,20 @@ func (c *client) cmdCd(cmds []string) error {
 	err := os.Chdir(cmds[1])
 	if err != nil {
 		msg := "\"" + cmds[1] + "\"" + " is not exist."
+		log.Printf("[SERVER][ CWD]%s\n", msg)
 		err = c.sendResponse(statusRequestedActionNotTaken, msg)
 		if err != nil {
 			return err
 		}
 		return err
 	}
+
+	pwd, err := os.Getwd()
+	if err != nil {
+		return err
+	}
+	log.Printf("[SERVER][ CWD]current directory: %s\n", pwd)
+
 	err = c.sendResponse(statusRequestedActionOK, "CWD command successful.")
 	if err != nil {
 		return err
@@ -31,7 +42,7 @@ func (c *client) cmdList(dataConn net.Conn, cmds []string) error {
 	}
 	defer dataConn.Close()
 
-	err := c.sendResponse(statusFileOK, "data connection for ***")
+	err := c.sendResponse(statusFileOK, "file status OK")
 	if err != nil {
 		return err
 	}
@@ -50,7 +61,7 @@ func (c *client) cmdList(dataConn net.Conn, cmds []string) error {
 
 	dataConn.Write(out)
 
-	fmt.Printf("ls command: %s\n", string(out))
+	log.Printf("[SERVER][LIST]:\n%s\n", string(out))
 
 	err = c.sendResponse(statusCloseDataConnection, "complete data connection")
 	if err != nil {
@@ -66,6 +77,7 @@ func (c *client) cmdPwd() error {
 		return err
 	}
 	msg := "\"" + dir + "\" is current directory."
+	log.Printf("[SERVER][ PWD]%s", msg)
 	err = c.sendResponse(statusPathCreated, msg)
 	if err != nil {
 		return err

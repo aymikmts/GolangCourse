@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"strconv"
 	"strings"
@@ -26,7 +27,7 @@ func parseAddr(addr string) (string, error) {
 	port = p1*256 + p2
 
 	ret := fmt.Sprintf("%s.%s.%s.%s:%d", nums[0], nums[1], nums[2], nums[3], port)
-	fmt.Printf("IP address: %s\n", ret)
+	log.Printf("[SERVER][PORT]IP address: %s\n", ret)
 	return ret, nil
 }
 
@@ -40,13 +41,8 @@ func (c *client) cmdPort(cmds []string) (net.Conn, error) {
 		return nil, err
 	}
 
-	fmt.Printf("try to connect: %s\n", ipAddr)
+	log.Printf("[SERVER][PORT]try to connect: %s\n", ipAddr)
 
-	//!!!!!!!!!!!!!!!!
-	// fmt.Printf("[DEBUG] USING Dummy dataConn [cmdport.go]\n")
-	// var dataConn net.Conn
-	// dataConn = c.conn
-	//!!!!!!!!!!!!!!!!
 	dataConn, err := net.Dial("tcp", ipAddr)
 	if err != nil {
 		return nil, err

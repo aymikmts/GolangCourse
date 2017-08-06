@@ -1,5 +1,7 @@
 package main
 
+import "log"
+
 type mode string
 
 // ASCII or BINARY
@@ -22,6 +24,7 @@ func (c *client) cmdType(cmds []string) error {
 	}
 
 	msg := "type is \"" + string(DataType) + "\""
+	log.Printf("[SERVER][TYPE]%s\n", msg)
 	err := c.sendResponse(statusCommandOK, msg)
 	if err != nil {
 		return err

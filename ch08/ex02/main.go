@@ -32,7 +32,7 @@ type client struct {
 func main() {
 	fmt.Println("Start FTP server!")
 
-	listener, err := net.Listen("tcp", "localhost:21")
+	listener, err := net.Listen("tcp", ":21")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -59,6 +59,13 @@ func (c *client) sendResponse(code int, message string) error {
 
 func parseCommand(line string) []string {
 	cmds := strings.Split(line, " ")
+
+	if len(cmds) > 1 {
+		args := strings.Join(cmds[1:], " ")
+		log.Printf("[CLIENT][%s]%s\n", cmds[0], args)
+	} else {
+		log.Printf("[CLIENT][%s]\n", cmds[0])
+	}
 	return cmds
 }
 
@@ -66,7 +73,7 @@ func handleConn(conn net.Conn) {
 	defer conn.Close()
 
 	addr := conn.RemoteAddr().String()
-	fmt.Printf("%s has connected.\n", addr)
+	log.Printf("[SERVER][    ]\"%s\" has connected.\n", addr)
 
 	// new client
 	var c client
@@ -84,13 +91,12 @@ func handleConn(conn net.Conn) {
 		line, err := c.r.ReadLine()
 		if err != nil {
 			if err == io.EOF {
-				log.Printf("Disconnected.\n")
+				log.Printf("[SERVER][    ]\"%s\" has disconnected.\n", addr)
 				return
 			}
 			log.Println(err)
 			return
 		}
-		fmt.Printf("CLIENT: %s\n", line)
 		cmds := parseCommand(line)
 
 		switch cmds[0] {
@@ -101,14 +107,14 @@ func handleConn(conn net.Conn) {
 		case "NLST":
 			err = c.cmdList(dataConn, cmds)
 		case "PASS":
-			fmt.Printf("User logged in.\n")
+			log.Printf("[SERVER][PASS]User logged in.\n")
 			err = c.sendResponse(statusLoggedIn, "WELCOME!")
 		case "PORT":
 			dataConn, err = c.cmdPort(cmds)
 		case "PWD":
 			err = c.cmdPwd()
 		case "QUIT":
-			err = c.sendResponse(statusLoggedOut, "bye")
+			err = c.sendResponse(statusLoggedOut, "BYE!")
 		case "RETR":
 			c.cmdRetr(dataConn, cmds)
 		case "STOR":
@@ -116,12 +122,12 @@ func handleConn(conn net.Conn) {
 		case "TYPE":
 			err = c.cmdType(cmds)
 		case "USER":
-			fmt.Printf("User: %s\n", cmds[1])
+			log.Printf("[SERVER][USER]User: %s\n", cmds[1])
 			err = c.sendResponse(statusUserOK, "User mame OK. Need password.")
 
 		default:
 			msg := fmt.Sprintf("command [%v] is not implemented.", cmds[0])
-			fmt.Println(msg)
+			log.Printf("[SERVER][    ]%s\n", msg)
 			err = c.sendResponse(statusCmdNotImplemented, msg)
 		}
 		if err != nil {

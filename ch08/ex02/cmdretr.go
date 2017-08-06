@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
 )
@@ -26,7 +27,7 @@ func (c *client) cmdRetr(dataConn net.Conn, cmds []string) error {
 		return err
 	}
 	defer f.Close()
-	fmt.Printf("[RETR]]File opened: %s\n", cmds[1])
+	log.Printf("[SERVER][RETR]File opened: %s\n", cmds[1])
 
 	// クライアントにデータを送信する
 	size, err := io.Copy(dataConn, f)
@@ -40,7 +41,7 @@ func (c *client) cmdRetr(dataConn net.Conn, cmds []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("[RETR]Complete transfer.\n")
+	log.Printf("[SERVER][RETR]%s\n", msg)
 
 	return nil
 }

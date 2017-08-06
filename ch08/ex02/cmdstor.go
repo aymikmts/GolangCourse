@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io"
+	"log"
 	"net"
 	"os"
 )
@@ -26,7 +27,7 @@ func (c *client) cmdStor(dataConn net.Conn, cmds []string) error {
 		return err
 	}
 	defer f.Close()
-	fmt.Printf("[STOR]]File created: %s\n", cmds[1])
+	log.Printf("[SERVER][STOR]File created: %s\n", cmds[1])
 
 	// サーバーにデータを送信する
 	size, err := io.Copy(f, dataConn)
@@ -40,7 +41,7 @@ func (c *client) cmdStor(dataConn net.Conn, cmds []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("[STOR]Complete transfer.\n")
+	log.Printf("[SERVER][STOR]%s.\n", msg)
 
 	return nil
 }
