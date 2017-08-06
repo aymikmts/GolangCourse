@@ -39,8 +39,14 @@ func (c *client) cmdPort(cmds []string) (net.Conn, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	fmt.Printf("try to connect: %s\n", ipAddr)
 
+	//!!!!!!!!!!!!!!!!
+	// fmt.Printf("[DEBUG] USING Dummy dataConn [cmdport.go]\n")
+	// var dataConn net.Conn
+	// dataConn = c.conn
+	//!!!!!!!!!!!!!!!!
 	dataConn, err := net.Dial("tcp", ipAddr)
 	if err != nil {
 		return nil, err

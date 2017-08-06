@@ -52,7 +52,7 @@ func (c *client) cmdList(dataConn net.Conn, cmds []string) error {
 
 	fmt.Printf("ls command: %s\n", string(out))
 
-	err = c.sendResponse(statusCloseDataConnection, "complete data connection.")
+	err = c.sendResponse(statusCloseDataConnection, "complete data connection")
 	if err != nil {
 		return err
 	}

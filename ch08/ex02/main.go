@@ -110,9 +110,9 @@ func handleConn(conn net.Conn) {
 		case "QUIT":
 			err = c.sendResponse(statusLoggedOut, "bye")
 		case "RETR":
-			fmt.Println("NOT IMPLEMENTED")
+			c.cmdRetr(dataConn, cmds)
 		case "STOR":
-			fmt.Println("NOT IMPLEMENTED")
+			c.cmdStor(dataConn, cmds)
 		case "TYPE":
 			err = c.cmdType(cmds)
 		case "USER":
