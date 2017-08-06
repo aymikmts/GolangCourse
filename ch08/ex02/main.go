@@ -32,7 +32,7 @@ type client struct {
 func main() {
 	fmt.Println("Start FTP server!")
 
-	listener, err := net.Listen("tcp", "localhost:8000")
+	listener, err := net.Listen("tcp", "localhost:21")
 	if err != nil {
 		log.Fatal(err)
 	}
