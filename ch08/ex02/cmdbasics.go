@@ -12,14 +12,12 @@ func (c *client) cmdCd(cmds []string) error {
 	if len(cmds) < 2 {
 		return fmt.Errorf("CWD command needs argument")
 	}
+
 	err := os.Chdir(cmds[1])
 	if err != nil {
 		msg := "\"" + cmds[1] + "\"" + " is not exist."
 		log.Printf("[SERVER][ CWD]%s\n", msg)
 		err = c.sendResponse(statusRequestedActionNotTaken, msg)
-		if err != nil {
-			return err
-		}
 		return err
 	}
 
@@ -36,7 +34,7 @@ func (c *client) cmdCd(cmds []string) error {
 	return nil
 }
 
-func (c *client) cmdList(dataConn net.Conn, cmds []string) error {
+func (c *client) cmdList(dataConn net.Conn, cmds []string, isDetail bool) error {
 	if dataConn == nil {
 		return fmt.Errorf("data connection is not established")
 	}
@@ -48,8 +46,10 @@ func (c *client) cmdList(dataConn net.Conn, cmds []string) error {
 	}
 
 	var args []string
-	args = append(args, "-l")
 
+	if isDetail {
+		args = append(args, "-l")
+	}
 	if len(cmds) > 2 {
 		args = append(args, cmds[1])
 	}
@@ -76,8 +76,9 @@ func (c *client) cmdPwd() error {
 	if err != nil {
 		return err
 	}
-	msg := "\"" + dir + "\" is current directory."
-	log.Printf("[SERVER][ PWD]%s", msg)
+
+	msg := "\"" + dir + "\""
+	log.Printf("[SERVER][ PWD]current directory: %s", dir)
 	err = c.sendResponse(statusPathCreated, msg)
 	if err != nil {
 		return err

@@ -7,6 +7,7 @@ import (
 	"log"
 	"net"
 	"net/textproto"
+	"os"
 	"strings"
 )
 
@@ -20,6 +21,7 @@ const (
 	statusRequestedActionOK       = 250
 	statusPathCreated             = 257
 	statusUserOK                  = 331
+	statusSyntaxError             = 500
 	statusCmdNotImplemented       = 502
 	statusRequestedActionNotTaken = 550
 )
@@ -34,14 +36,14 @@ func main() {
 
 	listener, err := net.Listen("tcp", ":21")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalln(err)
 	}
 	defer listener.Close()
 
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			log.Fatal(err)
+			log.Fatalln(err)
 			continue
 		}
 		go handleConn(conn)
@@ -72,6 +74,12 @@ func parseCommand(line string) []string {
 func handleConn(conn net.Conn) {
 	defer conn.Close()
 
+	rootDir, err := os.Getwd()
+	if err != nil {
+		log.Fatalln(err)
+	}
+	fmt.Printf("root directory: %s\n", rootDir)
+
 	addr := conn.RemoteAddr().String()
 	log.Printf("[SERVER][    ]\"%s\" has connected.\n", addr)
 
@@ -79,7 +87,7 @@ func handleConn(conn net.Conn) {
 	var c client
 	c.conn = conn
 	c.r = textproto.NewReader(bufio.NewReader(conn))
-	err := c.sendResponse(statusReady, "Ready for FTP service.")
+	err = c.sendResponse(statusReady, "Ready for FTP service.")
 	if err != nil {
 		log.Println(err)
 		return
@@ -91,6 +99,13 @@ func handleConn(conn net.Conn) {
 		line, err := c.r.ReadLine()
 		if err != nil {
 			if err == io.EOF {
+				// TODO: クライアントが切断されたとき、カレントディレクトリに戻る
+				err := os.Chdir(rootDir)
+				if err != nil {
+					msg := "\"" + rootDir + "\"" + " is not exist."
+					log.Printf("[SERVER][ CWD]%s\n", msg)
+					return
+				}
 				log.Printf("[SERVER][    ]\"%s\" has disconnected.\n", addr)
 				return
 			}
@@ -100,12 +115,17 @@ func handleConn(conn net.Conn) {
 		cmds := parseCommand(line)
 
 		switch cmds[0] {
+		case "CDUP":
+			cd := []string{"", ".."}
+			err = c.cmdCd(cd)
 		case "CWD":
 			err = c.cmdCd(cmds)
+		case "EPRT":
+			dataConn, err = c.cmdEprt(cmds)
 		case "LIST":
-			err = c.cmdList(dataConn, cmds)
+			err = c.cmdList(dataConn, cmds, true)
 		case "NLST":
-			err = c.cmdList(dataConn, cmds)
+			err = c.cmdList(dataConn, cmds, false)
 		case "PASS":
 			log.Printf("[SERVER][PASS]User logged in.\n")
 			err = c.sendResponse(statusLoggedIn, "WELCOME!")

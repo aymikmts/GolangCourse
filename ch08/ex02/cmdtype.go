@@ -16,6 +16,7 @@ var DataType mode
 func (c *client) cmdType(cmds []string) error {
 	switch cmds[1] {
 	case "A":
+		log.Printf("[SERVER][TYPE]ASCII mode is not implemented. a file is transfer by BINARY mode.")
 		DataType = ModeASCII
 	case "I":
 		DataType = ModeBINARY
