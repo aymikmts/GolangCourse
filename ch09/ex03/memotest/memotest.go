@@ -22,28 +22,21 @@ import (
 //	return ioutil.ReadAll(resp.Body)
 //}
 
-func cancelled() bool {
-	select {
-	case <-done:
-		return true
-	default:
-		return false
-	}
-}
-
-func httpGetBody(url string, done chan<- struct{}) (interface{}, error) {
+func httpGetBody(url string, done <-chan struct{}) (interface{}, error) {
 	req, err := http.NewRequest("GET", url, nil)
 
-	cancel := make(chan struct{})
-	req.Cancel = cancel
-	if cancelled() {
-		close(cancel)
-		return nil, nil
+	if done != nil {
+		cancel := make(chan struct{})
+		req.Cancel = cancel
+		go func() {
+			<-done
+			close(cancel)
+		}()
 	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nl, err
+		return nil, err
 	}
 	defer resp.Body.Close()
 	return ioutil.ReadAll(resp.Body)
@@ -74,7 +67,7 @@ func incomingURLs() <-chan string {
 }
 
 type M interface {
-	Get(key string, done chan<- struct{}) (interface{}, error)
+	Get(key string, done <-chan struct{}) (interface{}, error)
 }
 
 /*
@@ -131,23 +124,21 @@ func ConcurrentCancel(t *testing.T, m M) {
 		n.Add(1)
 		go func(url string) {
 			defer n.Done()
-
+			start := time.Now()
 			var done = make(chan struct{})
 			go func() {
 				os.Stdin.Read(make([]byte, 1)) // 1バイトを読み込む
 				close(done)
 			}()
 
-			start := time.Now()
 			value, err := m.Get(url, done)
 			if err != nil {
 				log.Print(err)
 				return
 			}
-			fmt.Printf("%s, %s, %d bytes\n",
-				url, time.Since(start), len(value.([]byte)))
+			fmt.Printf("%s, %s, %v bytes\n",
+				url, time.Since(start), value)
 		}(url)
 	}
 	n.Wait()
-
 }

@@ -1,7 +1,7 @@
 package memo
 
 // Funcはメモ化する関数の型です。
-type Func func(key string) (interface{}, error)
+type Func func(key string, done <-chan struct{}) (interface{}, error)
 
 // resultはFuncの呼び出し結果です。
 type result struct {
@@ -19,7 +19,7 @@ type entry struct {
 type request struct {
 	key      string
 	response chan<- result // クライアントは結果をひとつだけ望んでいます
-	done     chan<- struct{}
+	done     <-chan struct{}
 }
 
 type Memo struct{ requests chan request }
@@ -32,13 +32,15 @@ func New(f Func) *Memo {
 	return memo
 }
 
-func (memo *Memo) Get(key string, done chan<- struct{}) (interface{}, error) {
+func (memo *Memo) Get(key string, done <-chan struct{}) (interface{}, error) {
 	response := make(chan result)
 	memo.requests <- request{key, response, done}
 	res := <-response
 	select {
 	case <-done:
-		return nil, nil
+		return res.value, res.err
+	default:
+		return res.value, res.err
 	}
 	return res.value, res.err
 }
@@ -53,15 +55,15 @@ func (memo *Memo) server(f Func) {
 			// これは、このkeyに対する最初のリクエスト
 			e = &entry{ready: make(chan struct{})}
 			cache[req.key] = e
-			go e.call(f, req.key) // call f(key)
+			go e.call(f, req.key, req.done) // call f(key)
 		}
 		go e.deliver(req.response)
 	}
 }
 
-func (e *entry) call(f Func, key string) {
+func (e *entry) call(f Func, key string, done <-chan struct{}) {
 	// 関数を評価する
-	e.res.value, e.res.err = f(key)
+	e.res.value, e.res.err = f(key, done)
 	// 用意できたことをブロードキャストする
 	close(e.ready)
 }
