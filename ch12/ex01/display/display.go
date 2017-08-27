@@ -64,6 +64,8 @@ func formatAtom(v reflect.Value) string {
 		return strconv.Quote(v.String())
 	case reflect.Chan, reflect.Func, reflect.Ptr, reflect.Slice, reflect.Map:
 		return v.Type().String() + "0x" + strconv.FormatUint(uint64(v.Pointer()), 16)
+
+	// ex01で追加
 	// reflect.Struct
 	case reflect.Struct:
 		var elms []string
@@ -80,6 +82,7 @@ func formatAtom(v reflect.Value) string {
 			elms = append(elms, elm)
 		}
 		return v.Type().String() + "{" + strings.Join(elms, ", ") + "}"
+
 	default: // reflect.Interface
 		return v.Type().String() + "value"
 	}
