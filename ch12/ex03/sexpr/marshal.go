@@ -69,7 +69,32 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 		}
 		buf.WriteByte(')')
 
-	default: // float, complex,bool, chan, func, interface
+	// ex03で追加
+	case reflect.Bool:
+		if v.Bool() == true {
+			buf.WriteString("t")
+		} else {
+			buf.WriteString("nil")
+		}
+		return nil
+	case reflect.Float32, reflect.Float64:
+		fmt.Fprintf(buf, "%f", v.Float())
+		return nil
+	case reflect.Complex64, reflect.Complex128:
+		fmt.Fprintf(buf, "#C(%f %f)", real(v.Complex()), imag(v.Complex()))
+		return nil
+	case reflect.Interface:
+		if v.IsNil() {
+			buf.WriteString("nil")
+		} else {
+			buf.WriteByte('(')
+			fmt.Fprintf(buf, "\"%s\" ", v.Elem().Type())
+			encode(buf, v.Elem())
+			buf.WriteByte(')')
+		}
+		return nil
+
+	default: // chan, func
 		return fmt.Errorf("unsupported type: %s", v.Type())
 	}
 	return nil
