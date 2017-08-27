@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strconv"
+	"strings"
 )
 
 func Display(name string, x interface{}) {
@@ -63,7 +64,23 @@ func formatAtom(v reflect.Value) string {
 		return strconv.Quote(v.String())
 	case reflect.Chan, reflect.Func, reflect.Ptr, reflect.Slice, reflect.Map:
 		return v.Type().String() + "0x" + strconv.FormatUint(uint64(v.Pointer()), 16)
-	default: // reflect.Array, reflect.Struct, reflect.Interface
+	// reflect.Struct
+	case reflect.Struct:
+		var elms []string
+		for i := 0; i < v.NumField(); i++ {
+			elm := fmt.Sprintf("%s: %v", v.Type().Field(i).Name, formatAtom(v.Field(i)))
+			elms = append(elms, elm)
+		}
+		return v.Type().Name() + "{" + strings.Join(elms, ", ") + "}"
+	// reflect.Array
+	case reflect.Array:
+		var elms []string
+		for i := 0; i < v.Len(); i++ {
+			elm := fmt.Sprintf("%v", formatAtom(v.Index(i)))
+			elms = append(elms, elm)
+		}
+		return v.Type().String() + "{" + strings.Join(elms, ", ") + "}"
+	default: // reflect.Interface
 		return v.Type().String() + "value"
 	}
 }
