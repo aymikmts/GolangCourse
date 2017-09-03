@@ -29,7 +29,11 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 		buf.WriteByte('(')
 		for i := 0; i < v.Len(); i++ {
 			if i > 0 {
-				buf.WriteByte(' ')
+				if i != v.Len() {
+					buf.WriteString("\n\t")
+				} else {
+					buf.WriteByte(' ')
+				}
 			}
 			if err := encode(buf, v.Index(i)); err != nil {
 				return err
@@ -47,7 +51,11 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 			if err := encode(buf, v.Field(i)); err != nil {
 				return err
 			}
-			buf.WriteByte(')')
+			if i != v.NumField()-1 {
+				buf.WriteString(")\n")
+			} else {
+				buf.WriteByte(')')
+			}
 		}
 		buf.WriteByte(')')
 
@@ -65,9 +73,14 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 			if err := encode(buf, v.MapIndex(key)); err != nil {
 				return err
 			}
-			buf.WriteByte(')')
+
+			if i != v.Len()-1 {
+				buf.WriteString(")\n\t")
+			} else {
+				buf.WriteByte(')')
+			}
 		}
-		buf.WriteString(")\n")
+		buf.WriteByte(')')
 
 	// ex03で追加
 	case reflect.Bool:
