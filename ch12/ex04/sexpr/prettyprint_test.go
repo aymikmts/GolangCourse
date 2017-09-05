@@ -37,7 +37,7 @@ func TestPrettyPrint(t *testing.T) {
 		},
 	}
 
-	buf, err := Marshal(in)
+	buf, err := MarshalWithIndent(in)
 	if err != nil {
 		log.Fatalln(err)
 	}

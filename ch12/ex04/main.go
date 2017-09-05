@@ -37,7 +37,7 @@ func main() {
 		},
 	}
 
-	buf, err := sexpr.Marshal(strangelove)
+	buf, err := sexpr.MarshalWithIndent(strangelove)
 	if err != nil {
 		log.Fatalln(err)
 	}
