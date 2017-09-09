@@ -29,10 +29,18 @@ func read(lex *lexer, v reflect.Value) {
 	case scanner.Ident:
 		// 唯一の正当な識別子は"nil"と
 		// 構造体のフィールド名です。
-		if lex.text() == "nil" {
+		switch lex.text() {
+		case "nil":
 			v.Set(reflect.Zero(v.Type()))
 			lex.next()
 			return
+
+		// ex03で追加
+		case "t":
+			v.SetBool(true)
+			lex.next()
+			return
+
 		}
 	case scanner.String:
 		s, _ := strconv.Unquote(lex.text()) // 注意: エラーを無視している
@@ -44,6 +52,21 @@ func read(lex *lexer, v reflect.Value) {
 		v.SetInt(int64(i))
 		lex.next()
 		return
+
+		// ex03で追加
+	case scanner.Float:
+		switch v.Kind() {
+		case reflect.Float32:
+			f, _ := strconv.ParseFloat(lex.text(), 32)
+			v.SetFloat(f)
+		case reflect.Float64:
+			f, _ := strconv.ParseFloat(lex.text(), 64)
+			v.SetFloat(f)
+		default:
+			panic(fmt.Sprintf("unexpected type %v", v.Kind()))
+		}
+		// case '#':
+
 	case '(':
 		lex.next()
 		readList(lex, v)
