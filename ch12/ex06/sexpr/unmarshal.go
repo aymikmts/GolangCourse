@@ -65,6 +65,8 @@ func read(lex *lexer, v reflect.Value) {
 		default:
 			panic(fmt.Sprintf("unexpected type %v", v.Kind()))
 		}
+		lex.next()
+		return
 		// case '#':
 
 	case '(':
