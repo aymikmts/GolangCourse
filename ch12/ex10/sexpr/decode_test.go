@@ -24,6 +24,7 @@ func TestUnmarshal(t *testing.T) {
 		UIntVal   interface{}
 		Str       interface{}
 		StrSlice  interface{}
+		StrArr    interface{}
 		StrMap    interface{}
 		BoolVal   interface{}
 		F32Val    interface{}
@@ -37,6 +38,7 @@ func TestUnmarshal(t *testing.T) {
 		UIntVal:   uint(20),
 		Str:       "test",
 		StrSlice:  []string{"test1", "test2"},
+		StrArr:    [3]string{"test1", "test2", "test3"},
 		StrMap:    map[string]string{"a": "A", "b": "B"},
 		BoolVal:   true,
 		F32Val:    float32(0.125),
@@ -49,13 +51,13 @@ func TestUnmarshal(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Marshal failed: %v", err)
 	}
-	fmt.Printf("Marshal() = %s\n", buf)
+	//fmt.Printf("Marshal() = %s\n", buf)
 
 	var got TestStruct
 	if err := Unmarshal(buf, &got); err != nil {
 		t.Fatalf("Unmarshal failed: %v", err)
 	}
-	fmt.Printf("Unmarshal() = %v\n", got)
+	//fmt.Printf("Unmarshal() = %v\n", got)
 
 	if !reflect.DeepEqual(input, got) {
 		t.Fatalf("input is not equal to got.\nin:\n%v\ngot:\n%v", input, got)

@@ -6,6 +6,7 @@ import (
 	"io"
 	"reflect"
 	"strconv"
+	"strings"
 	"text/scanner"
 )
 
@@ -133,7 +134,11 @@ func read(lex *lexer, v reflect.Value) {
 		return
 	case scanner.Int:
 		i, _ := strconv.Atoi(lex.text()) // 注意: エラーを無視している
-		v.SetInt(int64(i))
+		if isSignedInt(v) {
+			v.SetInt(int64(i))
+		} else {
+			v.SetUint(uint64(i))
+		}
 		lex.next()
 		return
 
@@ -149,6 +154,8 @@ func read(lex *lexer, v reflect.Value) {
 		default:
 			panic(fmt.Sprintf("unexpected type %v", v.Kind()))
 		}
+		lex.next()
+		return
 
 	case '#': // #C(float, float)
 		lex.next()
@@ -219,6 +226,15 @@ func readList(lex *lexer, v reflect.Value) {
 			v.SetMapIndex(key, value)
 			lex.consume(')')
 		}
+
+		// ex10 で追加
+	case reflect.Interface:
+		t, _ := strconv.Unquote(lex.text())
+		value := reflect.New(parseType(t)).Elem()
+		lex.next()
+		read(lex, value)
+		v.Set(value)
+
 	default:
 		panic(fmt.Sprintf("cannot decode list into %v", v.Type()))
 	}
@@ -232,4 +248,66 @@ func endList(lex *lexer) bool {
 		return true
 	}
 	return false
+}
+
+// ex10で追加
+var types = map[string]reflect.Type{
+	"int":        reflect.TypeOf(int(0)),
+	"int8":       reflect.TypeOf(int8(0)),
+	"int16":      reflect.TypeOf(int16(0)),
+	"int32":      reflect.TypeOf(int32(0)),
+	"int64":      reflect.TypeOf(int64(0)),
+	"uint":       reflect.TypeOf(uint(0)),
+	"uint8":      reflect.TypeOf(uint8(0)),
+	"uint16":     reflect.TypeOf(uint16(0)),
+	"uint32":     reflect.TypeOf(uint32(0)),
+	"uint64":     reflect.TypeOf(uint64(0)),
+	"float32":    reflect.TypeOf(float32(0)),
+	"float64":    reflect.TypeOf(float64(0)),
+	"complex64":  reflect.TypeOf(complex64(0 + 0i)),
+	"complex128": reflect.TypeOf(complex128(0 + 0i)),
+	"bool":       reflect.TypeOf(true),
+	"string":     reflect.TypeOf(""),
+}
+
+func parseType(tName string) reflect.Type {
+	t, ok := types[tName]
+	if ok {
+		return t
+	}
+
+	// slice
+	if strings.HasPrefix(tName, "[]") {
+		return reflect.SliceOf(parseType(tName[2:]))
+	}
+
+	// array
+	if strings.HasPrefix(tName, "[") {
+		idx := strings.Index(tName, "]")
+		size := tName[1:idx]
+		count, _ := strconv.Atoi(size)
+		return reflect.ArrayOf(count, parseType(tName[idx+1:]))
+	}
+
+	// map
+	if strings.HasPrefix(tName, "map") {
+		idx := strings.Index(tName, "]")
+		return reflect.MapOf(parseType(tName[4:idx]), parseType(tName[idx+1:]))
+	}
+
+	panic(fmt.Sprintf("parseType() unexpected type: %s\n", tName))
+}
+
+func isSignedInt(v reflect.Value) bool {
+	switch v.Kind() {
+	case reflect.Int, reflect.Int8, reflect.Int16,
+		reflect.Int32, reflect.Int64:
+		return true
+
+	case reflect.Uint, reflect.Uint8, reflect.Uint16,
+		reflect.Uint32, reflect.Uint64, reflect.Uintptr:
+		return false
+	default:
+		panic(fmt.Sprintf("isSignedInt() unexpected type: %v\n", v.Kind()))
+	}
 }
