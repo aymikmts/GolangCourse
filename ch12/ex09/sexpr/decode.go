@@ -149,7 +149,31 @@ func read(lex *lexer, v reflect.Value) {
 		default:
 			panic(fmt.Sprintf("unexpected type %v", v.Kind()))
 		}
-		// case '#':
+
+	case '#': // #C(float, float)
+		lex.next()
+		lex.next()
+		lex.next()
+		real := lex.text()
+		lex.next()
+		imag := lex.text()
+		lex.next()
+		lex.consume(')')
+
+		var bitSize int
+		switch v.Kind() {
+		case reflect.Complex64:
+			bitSize = 32
+		case reflect.Complex128:
+			bitSize = 64
+		default:
+			panic(fmt.Sprintf("unexpected type: %v", v.Kind()))
+		}
+
+		cReal, _ := strconv.ParseFloat(real, bitSize)
+		cImag, _ := strconv.ParseFloat(imag, bitSize)
+		v.SetComplex(complex(cReal, cImag))
+		return
 
 	case '(':
 		lex.next()
