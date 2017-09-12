@@ -13,8 +13,25 @@ func TestPack(t *testing.T) {
 		input Data
 		want  string
 	}{
-		{Data{Labels: []string{}, MaxResults: 0, Exact: false}, ""},
-		{Data{Labels: []string{"golang", "programming"}, MaxResults: 0, Exact: false}, "l=golang&l=programming"},
+		{Data{Labels: []string{}, MaxResults: 10, Exact: false}, ""},
+		{Data{
+			Labels:     []string{"golang", "programming"},
+			MaxResults: 10,
+			Exact:      false},
+			"l=golang&l=programming",
+		},
+		{Data{
+			Labels:     []string{"golang", "programming"},
+			MaxResults: 100,
+			Exact:      false},
+			"l=golang&l=programming&max=100",
+		},
+		// {Data{
+		// 	Labels:     []string{"golang", "programming"},
+		// 	MaxResults: 10,
+		// 	Exact:      true},
+		// 	"l=golang&l=programming&x=true",
+		// },
 	}
 
 	for _, test := range tests {
