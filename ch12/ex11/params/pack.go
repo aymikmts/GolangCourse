@@ -27,26 +27,17 @@ func Pack(ptr interface{}) (string, error) {
 		fields[name] = v.Field(i)
 	}
 
-	fmt.Println()
-	var buf bytes.Buffer
-	n := 0
 	// フィールドごとにパラメータを抽出し、文字列を作成する
+	elms := make(map[string]string) // フィールドごとの文字列
 	for name, value := range fields {
-		// 各パラメータを&で連結する
-		//n++
-		//if n < len(fields)-1 {
-		if n > 0 && n < len(fields)-1 {
-			buf.WriteRune('&')
-
-		}
-		//n++
-		//}
+		// パラメータ値を読み込み、[]stringにまとめる
 		var slice []string
 		if err := extract(&slice, value); err != nil {
 			return "", err
 		}
-		fmt.Printf("name:%s slice:%v sliceSize:%d n:%d size:%d\n", name, slice, len(slice), n, len(fields))
 
+		// sliceを&で連結
+		var buf bytes.Buffer
 		for i, s := range slice {
 			// maxパラメータはデフォルト値を考慮する
 			if name == "max" {
@@ -62,20 +53,24 @@ func Pack(ptr interface{}) (string, error) {
 				buf.WriteRune('&')
 			}
 			fmt.Fprintf(&buf, "%s=%s", name, s)
-
-			if i == len(slice)-1 {
-				fmt.Printf("  i=%d len(slice)-1:%d\n", i, len(slice)-1)
-				n++
-
-			}
-
 		}
-
-		// if len(slice) > 0 {
-		// 	n++
-		// }
-		fmt.Printf("  buf: %s\n", string(buf.Bytes()))
+		elms[name] = string(buf.Bytes())
 	}
+
+	// 各パラメータの文字列を&で連結
+	var buf bytes.Buffer
+	n := 0
+	for _, elm := range elms {
+		if len(elm) == 0 {
+			continue
+		}
+		if n > 0 && n < len(elms)-1 {
+			buf.WriteRune('&')
+		}
+		buf.WriteString(elm)
+		n++
+	}
+
 	return string(buf.Bytes()), nil
 }
 
