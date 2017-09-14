@@ -75,3 +75,7 @@ func populate(v reflect.Value, value string) error {
 	}
 	return nil
 }
+
+func checkValue(name string, v reflect.Value) error {
+	return nil
+}
