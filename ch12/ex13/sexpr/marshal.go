@@ -71,6 +71,7 @@ func encode(buf *bytes.Buffer, v reflect.Value) error {
 				if name == "" {
 					name = fieldInfo.Name
 				}
+				//
 
 				fmt.Fprintf(buf, "(%s ", name)
 				if err := encode(buf, v.Field(i)); err != nil {

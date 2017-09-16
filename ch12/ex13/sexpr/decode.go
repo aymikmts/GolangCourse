@@ -86,10 +86,26 @@ func (dec *Decoder) Token() Token {
 	panic(fmt.Sprintf("unexpected token %v", dec.lex.token))
 }
 
+// ex13で追加
+var Tags = make(map[string]string)
+
 // UnmarshalはS式のデータをパースしてnilではないポインタ
 // outにアドレスが入っている変数に移しかえます。
 func Unmarshal(data []byte, out interface{}) (err error) {
 	dec := NewDecoder(bytes.NewReader(data))
+
+	// ex13で追加
+	v := reflect.ValueOf(out).Elem() // 構造体変数
+	for i := 0; i < v.NumField(); i++ {
+		fieldInfo := v.Type().Field(i) // reflect.StructField
+		tag := fieldInfo.Tag           // reflect.StructTag
+		name := tag.Get("sexpr")
+		if name != "" {
+			Tags[name] = fieldInfo.Name
+		}
+	}
+	//
+
 	return dec.Decode(out)
 }
 
@@ -211,6 +227,14 @@ func readList(lex *lexer, v reflect.Value) {
 					lex.text()))
 			}
 			name := lex.text()
+
+			// ex13で追加
+			field, ok := Tags[name]
+			if ok {
+				name = field
+			}
+			//
+
 			lex.next()
 			read(lex, v.FieldByName(name))
 			lex.consume(')')

@@ -7,54 +7,27 @@ import (
 	"testing"
 )
 
+// ex13 で追加
 func TestMarshalFieldTag(t *testing.T) {
 	type TestStruct struct {
 		IntVal   int `sexpr:"int"`
 		Str      string
 		StrSlice []string `sexpr:"slice"`
 	}
-	test := TestStruct{
+	input := TestStruct{
 		IntVal:   123456789,
 		Str:      "Hello",
 		StrSlice: []string{"test1", "test2"},
 	}
 	want := "((int 123456789) (Str \"Hello\") (slice (\"test1\" \"test2\")))"
 
-	got, err := Marshal(test)
+	got, err := Marshal(input)
 	if err != nil {
 		t.Fatal(err)
 	}
 	if string(got) != want {
 		t.Errorf("Marshal() got \"%s\", want is \"%s\"", got, want)
 	}
-	// type Movie struct {
-	// 	Title, Subtitle string
-	// 	Year            int			`sexpr:"y"`
-	// 	Color           bool
-	// 	Actor  map[string]string	`sexpr:"act"`
-	// 	Oscars []string
-	// 	Sequel *string
-	// }
-	// strangelove := Movie{
-	// 	Title:    "Dr. Strangelove",
-	// 	Subtitle: "How I Learned to Stop Worrying and Love the Bomb",
-	// 	Year:     1964,
-	// 	Color:    false,
-	// 	Actor: map[string]string{
-	// 		"Dr. Strangelove":            "Peter Sellers",
-	// 		"Grp. Capt. Lionel Mandrake": "Peter Sellers",
-	// 		"Pres. Merkin Muffley":       "Peter Sellers",
-	// 		"Gen. Buck Turgidson":        "George C. Scott",
-	// 		"Brig. Gen. Jack D. Ripper":  "Sterling Hayden",
-	// 		`Maj. T.J. "King" Kong`:      "Slim Pickens",
-	// 	},
-	// 	Oscars: []string{
-	// 		"Best Actor (Nomin.)",
-	// 		"Best Adapted Screenplay (Nomin.)",
-	// 		"Best Director (Nomin.)",
-	// 		"Best Picture (Nomin.)",
-	// 	},
-	// }
 }
 
 func TestMarshalIgnoreZeroValue(t *testing.T) {

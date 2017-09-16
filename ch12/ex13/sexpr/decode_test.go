@@ -17,6 +17,31 @@ type Movie struct {
 	Sequel          *string
 }
 
+// ex13 で追加
+func TestUnmarshalFieldTag(t *testing.T) {
+	type TestStruct struct {
+		IntVal   int `sexpr:"int"`
+		Str      string
+		StrSlice []string `sexpr:"slice"`
+	}
+
+	input := []byte("((int 123456789) (Str \"Hello\") (slice (\"test1\" \"test2\")))")
+	want := TestStruct{
+		IntVal:   123456789,
+		Str:      "Hello",
+		StrSlice: []string{"test1", "test2"},
+	}
+
+	var got TestStruct
+	err := Unmarshal(input, &got)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Unmarshal() got \"%v\", want is \"%v\"", got, want)
+	}
+}
+
 // ex10 で追加
 func TestUnmarshal(t *testing.T) {
 	type TestStruct struct {
