@@ -1,6 +1,7 @@
 package equal
 
 import (
+	"math"
 	"reflect"
 	"unsafe"
 )
@@ -54,10 +55,10 @@ func equal(x, y reflect.Value, seen map[comparison]bool) bool {
 		return x.Uint() == y.Uint()
 
 	case reflect.Float32, reflect.Float64:
-		return x.Float() == y.Float()
+		return equalFloat(x.Float(), y.Float())
 
 	case reflect.Complex64, reflect.Complex128:
-		return x.Complex() == y.Complex()
+		return equalComplex(x.Complex(), y.Complex())
 
 	case reflect.Chan, reflect.UnsafePointer, reflect.Func:
 		return x.Pointer() == y.Pointer()
@@ -99,4 +100,15 @@ func equal(x, y reflect.Value, seen map[comparison]bool) bool {
 		return true
 	}
 	panic("unreachable")
+}
+
+const Diff = 1.0e-9
+
+func equalFloat(x, y float64) bool {
+	return math.Abs(x-y) < Diff
+}
+
+func equalComplex(x, y complex128) bool {
+	return equalFloat(real(x), real(y)) && equalFloat(imag(x), imag(y))
+
 }
