@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 )
@@ -35,6 +36,9 @@ func Unpack(req *http.Request, ptr interface{}) error {
 			continue // 認識されなかったHTTPパラメータを無視
 		}
 		for _, value := range values {
+			if err := checkValue(name, value); err != nil {
+				return err
+			}
 			if f.Kind() == reflect.Slice {
 				elem := reflect.New(f.Type().Elem()).Elem()
 				if err := populate(elem, value); err != nil {
@@ -76,6 +80,25 @@ func populate(v reflect.Value, value string) error {
 	return nil
 }
 
-func checkValue(name string, v reflect.Value) error {
+func checkValue(name string, value string) error {
+	switch name {
+	case "em":
+		email := regexp.MustCompile(`^[a-zA-Z0-9]+[a-zA-Z0-9\-._]+@[a-zA-Z0-9\-.]+$`)
+		if !email.MatchString(value) {
+			return fmt.Errorf("invalid email address: %s", value)
+		}
+
+	case "cn":
+		cardNo := regexp.MustCompile(`^[0-9]{14,16}$`)
+		if !cardNo.MatchString(value) {
+			return fmt.Errorf("invalid card number: %s", value)
+		}
+
+	case "pn":
+		postNo := regexp.MustCompile(`^[0-9]{7}$`)
+		if !postNo.MatchString(value) {
+			return fmt.Errorf("invalid post number: %s", value)
+		}
+	}
 	return nil
 }

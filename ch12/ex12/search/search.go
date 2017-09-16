@@ -1,7 +1,7 @@
 package main
 
 import (
-	"GolangCourse/ch12/params"
+	"GolangCourse/ch12/ex12/params"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +12,9 @@ func search(resp http.ResponseWriter, req *http.Request) {
 		Labels     []string `http:"l"`
 		MaxResults int      `http:"max"`
 		Exact      bool     `http:"x"`
+		EMails     []string `http:"em"`
+		CardNo     int      `http:"cn"`
+		PostNo     int      `http:"pn"`
 	}
 	data.MaxResults = 10
 	if err := params.Unpack(req, &data); err != nil {
