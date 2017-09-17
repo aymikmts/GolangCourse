@@ -15,13 +15,15 @@ import "C"
 
 import (
 	"io"
+	"sync"
 	"unsafe"
 )
 
 type writer struct {
-	w      io.Writer // 基底の出力ストリーム
-	stream *C.bz_stream
-	outbuf [64 * 1024]byte
+	sync.Mutex           // ex03 で追加
+	w          io.Writer // 基底の出力ストリーム
+	stream     *C.bz_stream
+	outbuf     [64 * 1024]byte
 }
 
 // NewWriter はbzip2の圧縮ストリーム用のライターを返します。
@@ -35,10 +37,15 @@ func NewWriter(out io.Writer) io.WriteCloser {
 }
 
 func (w *writer) Write(data []byte) (int, error) {
+	// ex03 で追加
+	w.Lock()
+	defer w.Unlock()
+	//
+
 	if w.stream == nil {
 		panic("closed")
 	}
-	var total int // 書き込まれた圧縮されていないバイト数
+	var total int
 
 	for len(data) > 0 {
 		inlen, outlen := C.uint(len(data)), C.uint(cap(w.outbuf))
@@ -57,12 +64,18 @@ func (w *writer) Write(data []byte) (int, error) {
 // Close は圧縮データをすべてはき出して、ストリームを閉じます。
 // 基底のio.Writerは閉じません。
 func (w *writer) Close() error {
+	// ex03 で追加
+	w.Lock()
+	defer w.Unlock()
+	//
+
 	if w.stream == nil {
 		panic("closed")
 	}
 	defer func() {
 		C.BZ2_bzCompressEnd(w.stream)
 		C.bz2free(w.stream)
+		w.stream = nil
 	}()
 	for {
 		inlen, outlen := C.uint(0), C.uint(cap(w.outbuf))
