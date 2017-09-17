@@ -13,14 +13,15 @@ import (
 // ex03 で追加
 func TestBzip2InParallel(t *testing.T) {
 	var compressed, uncompressed bytes.Buffer
-	w := bzip.NewWriter(&compressed)
-
+	w, err := bzip.NewWriter(&compressed)
+	if err != nil {
+		t.Fatal(err)
+	}
 	// 1 million回同じメッセージを書き込む
 	tee := io.MultiWriter(&uncompressed)
 	for i := 0; i < 1000000; i++ {
 		io.WriteString(tee, "hello")
 	}
-
 	// 1 million回同じメッセージを並列的に書き込む
 	tee = io.MultiWriter(w)
 	var wg sync.WaitGroup
@@ -32,16 +33,13 @@ func TestBzip2InParallel(t *testing.T) {
 		}()
 	}
 	wg.Wait()
-
 	if err := w.Close(); err != nil {
 		t.Fatal(err)
 	}
-
 	// 圧縮されたストリームのサイズをチェック
 	if got, want := compressed.Len(), 255; got != want {
 		t.Errorf("1 million hellos compressed to %d bytes, want %d", got, want)
 	}
-
 	// オリジナルと圧縮されていないものとを比較する
 	var decompressed bytes.Buffer
 	io.Copy(&decompressed, bzip2.NewReader(&compressed))
@@ -53,13 +51,17 @@ func TestBzip2InParallel(t *testing.T) {
 // gopl.io/ch13/bzip/bzip2_test.go
 func TestBzip2(t *testing.T) {
 	var compressed, uncompressed bytes.Buffer
-	w := bzip.NewWriter(&compressed)
+	w, err := bzip.NewWriter(&compressed)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	// 1 million回同じメッセージを書き込む。
 	tee := io.MultiWriter(w, &uncompressed)
 	for i := 0; i < 1000000; i++ {
 		io.WriteString(tee, "hello")
 	}
+
 	if err := w.Close(); err != nil {
 		t.Fatal(err)
 	}
